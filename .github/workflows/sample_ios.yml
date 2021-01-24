@@ -41,6 +41,9 @@ jobs:
     - name: build konnection library
       run: ./gradlew :konnection:build #:konnection:generateDummyFramework
 
+    - name: library podspec
+      run: cat konnection/Konnection.podspec
+
     - name: install pods
       run: cd samples/ios && pod install
 
