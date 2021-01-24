@@ -54,7 +54,7 @@ jobs:
         xcodebuild -workspace Sample.xcworkspace \
            -scheme Sample \
            -sdk iphonesimulator \
-           -destination ${{ matrix.destination }} \
+           -destination "${{ matrix.destination }}" \
            build | xcpretty -c
 
       #CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
