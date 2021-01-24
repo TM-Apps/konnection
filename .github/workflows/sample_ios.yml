@@ -1,4 +1,4 @@
-name: Konnection library
+name: Sample iOS CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request 
 # events but only for the master branch
@@ -42,7 +42,7 @@ jobs:
       run: ./gradlew :konnection:build #:konnection:generateDummyFramework
 
     - name: install pods
-      run: cd ios && pod install
+      run: cd samples/ios && pod install
 
     - name: build sample app
       run: |
