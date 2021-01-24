@@ -1,0 +1,52 @@
+if (project.ext.isMacOSHost) {
+
+// import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+// import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+// import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
+
+kotlin {
+    // add a platform switching to have an IDE support
+ // final def buildForDevice = project.findProperty('kotlin.native.cocoapods.target') == 'ios_arm'
+ // final def buildForDevice = project.findProperty('device')?.toBoolean() ?: false
+
+    iosX64()
+ // iosArm32()
+    iosArm64()
+
+    sourceSets {
+        iosMain {
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+            }
+        }
+
+        iosTest {
+        }
+
+     // iosX64Main {
+     // }
+
+     // iosArm32Main {
+     // }
+
+     // iosArm64Main {
+     // }
+
+        configure([targets.iosX64, /*targets.iosArm32,*/ targets.iosArm64]) {
+           compilations.main.source(sourceSets.iosMain)
+           compilations.test.source(sourceSets.iosTest)
+        }
+    }
+
+    cocoapods {
+        // configure fields required by CocoaPods
+        summary = 'A Kotlin Multiplatform library to emit Network Connection status.'
+        homepage = 'Link to a Kotlin/Native module homepage'
+
+        // the name of the produced framework can be changed.
+        // the name of the Gradle project is used here by default.
+        frameworkName = "Konnection"
+    }
+}
+
+}

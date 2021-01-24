@@ -1,0 +1,16 @@
+PODS:
+  - Konnection (1.0)
+
+DEPENDENCIES:
+  - Konnection (from `../../konnection`)
+
+EXTERNAL SOURCES:
+  Konnection:
+    :path: "../../konnection"
+
+SPEC CHECKSUMS:
+  Konnection: ceb50b388336f7c12b7547ed89fafe77bf46ab08
+
+PODFILE CHECKSUM: 0d5f686a8ef027221e0d6d52311cfd73eb037dc1
+
+COCOAPODS: 1.10.0

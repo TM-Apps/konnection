@@ -1,0 +1,20 @@
+# define a global platform for project
+platform :ios, '14.0'
+source 'https://github.com/CocoaPods/Specs.git'
+
+use_frameworks!
+
+target 'Sample' do
+  pod 'Konnection', :path => '../../konnection'
+
+  target 'SampleTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'SampleUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

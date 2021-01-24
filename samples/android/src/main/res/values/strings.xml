@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name" translatable="false">Konnection</string>
+
+    <string name="loading_title">Loading&#8230;</string>
+    <string name="retry_action">Retry</string>
+
+    <string name="network_connection_wifi">Connected by Wifi</string>
+    <string name="network_connection_mobile">Connected by Mobile Network</string>
+    <string name="network_connection_none">No Connection</string>
+
+    <string name="developer_title">Developer Info</string>
+    <string name="developer_name" translatable="false">TM Apps</string>
+    <string name="developer_website" translatable="false">https://tmapps.dev/</string>
+</resources>

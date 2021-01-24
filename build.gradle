@@ -1,0 +1,28 @@
+import org.jetbrains.kotlin.konan.target.HostManager
+
+apply from: rootProject.file("gradle/experimental.gradle")
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:7.0.0-alpha04'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+    }
+}
+
+allprojects {
+    // the only place where HostManager could be instantiated
+    project.ext.hostManager = new HostManager()
+
+    repositories {
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

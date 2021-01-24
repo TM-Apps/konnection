@@ -1,0 +1,97 @@
+apply plugin: 'base'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'com.jfrog.bintray'
+/*
+afterEvaluate {
+    project.publishing.publications.all {
+        // rename artifacts
+        groupId = GROUP_ID
+        if (it.name.contains('metadata')) {
+            artifactId = "$ARTIFACT_ID"
+        } else {
+            artifactId = "$ARTIFACT_ID-$name"
+        }
+    }
+}
+*/
+bintray {
+    user = project.findProperty('bintrayUser') ?: System.getenv('BINTRAY_USER')
+    key = project.findProperty('bintrayApiKey') ?: System.getenv('BINTRAY_API_KEY')
+    publish = true
+    override = true
+
+    pkg {
+        userOrg = 'tmapps'
+        repo = 'maven'
+        name = 'konnection'
+        licenses = ['Apache-2.0']
+        publications = ['mavenProject']
+
+        version {
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+
+            gpg {
+                sign = true // determines whether to GPG sign the files. The default is false
+                passphrase = System.getenv('BINTRAY_PASSPHRASE')
+                // optional. The passphrase for GPG signing'
+            }
+        }
+    }
+}
+
+bintrayUpload.doFirst {
+    publications = project.publishing.publications
+}
+/*
+publishing {
+    repositories {
+        maven {
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+            credentials {
+                username = project.findProperty("sonatypeUsername") ?: System.getenv("SONATYPE_USERNAME")
+                password = project.findProperty("sonatypePassword") ?: System.getenv("SONATYPE_PASSWORD")
+            }
+        }
+    }
+
+    publications.all {
+        pom {
+            name.set("konnection")
+            description.set("A Kotlin Multiplatform Mobile library to emit Network Connection status.")
+            url.set("https://github.com/TM-Apps/konnection")
+            inceptionYear.set("2021")
+
+            scm {
+                url.set("https://github.com/TM-Apps/konnection")
+                connection.set("scm:git:https://github.com/TM-Apps/konnection.git")
+                developerConnection.set("scm:git:https://github.com/TM-Apps/konnection.git")
+                tag.set("HEAD")
+            }
+
+            issueManagement {
+                system.set("GitHub Issues")
+                url.set("https://github.com/TM-Apps/konnection/issues")
+            }
+
+            developers {
+                developer {
+                    name.set("Magnum Rocha")
+                    email.set("magnum.barbosa.rocha@gmail.com")
+                }
+            }
+
+            licenses {
+                license {
+                    name.set("The Apache Software License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("repo")
+                    comments.set("A business-friendly OSS license")
+                }
+            }
+        }
+    }
+}
+*/

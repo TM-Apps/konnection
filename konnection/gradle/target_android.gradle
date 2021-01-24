@@ -1,0 +1,59 @@
+android {
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 30
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/androidMain/AndroidManifest.xml'
+        }
+    }
+
+    testOptions.unitTests.includeAndroidResources = true
+
+    // workaround from: https://youtrack.jetbrains.com/issue/KT-43944
+    // Issue: "Configuration with name 'testApi' not found." was inserted by the AS 7.0.0-alpha03...
+    configurations {
+        create("androidTestApi")
+        create("androidTestDebugApi")
+        create("androidTestReleaseApi")
+        create("testApi")
+        create("testDebugApi")
+        create("testReleaseApi")
+    }
+}
+
+kotlin {
+    android {
+        publishAllLibraryVariants()
+    }
+
+    sourceSets {
+        androidMain {
+            kotlin.srcDir("src/androidMain/kotlin")
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+            }
+        }
+        androidTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+                implementation 'junit:junit:4.13.1'
+            }
+        }
+    }
+}

@@ -1,0 +1,46 @@
+plugins {
+    id 'kotlin-multiplatform'
+    id 'kotlin-native-cocoapods'
+    id 'com.android.library'
+    id 'io.gitlab.arturbosch.detekt' version "1.15.0"
+}
+
+apply from: rootProject.file("gradle/targets.gradle")
+apply from: project.file("gradle/target_android.gradle")
+apply from: project.file("gradle/target_ios.gradle")
+apply from: project.file("gradle/publishing.gradle")
+
+group = 'com.tmapps'
+version = '1.0.0'
+
+repositories {
+    google()
+    jcenter()
+    mavenLocal()
+}
+
+kotlin {
+    sourceSets {
+        all {
+            languageSettings {
+                progressiveMode = true
+                experimentalAnnotations.each { useExperimentalAnnotation(it) } // kotlin.ExperimentalUnsignedTypes - annotation FQ-name
+            //  languageVersion = '1.4' // possible values: '1.0', '1.1', '1.2', '1.3', '1.4'
+            //  apiVersion = '1.4' // possible values: '1.0', '1.1', '1.2', '1.3', '1.4'
+            //  enableLanguageFeature('InlineClasses') // language feature name
+            }
+        }
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+    }
+}

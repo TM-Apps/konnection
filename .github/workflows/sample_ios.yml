@@ -1,0 +1,70 @@
+name: Konnection library
+
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: macOS-latest
+    
+    strategy:
+      matrix:
+        destination: ['platform=iOS Simulator,OS=13.3,name=iPhone 11']
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    #- name: Install gpg
+    #  run: brew install gnupg
+
+    - name: setup JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 15.0.1
+
+    #- name: Select Xcode
+    #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
+
+    - name: Xcode version
+      run: /usr/bin/xcodebuild -version
+
+    - name: build konnection library
+      run: ./gradlew :konnection:build #:konnection:generateDummyFramework
+
+    - name: install pods
+      run: cd ios && pod install
+
+    - name: build sample app
+      run: |
+        cd samples/ios
+        set -o pipefail
+        xcodebuild -workspace Sample.xcworkspace \
+           -scheme Sample \
+           -sdk iphonesimulator \
+           -configuration Debug \
+           build | xcpretty -c
+
+      #CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
+
+      #run: |
+      #  cd ios
+      #  set -eo pipefail
+      #  xcodebuild -workspace Sample.xcworkspace \
+      #    -scheme Sample \
+      #    -sdk iphoneos \
+      #    -configuration AppStoreDistribution \
+      #    -archivePath $PWD/build/Sample.xcarchive \
+      #    clean archive | xcpretty
+
+      env:
+        destination: ${{ matrix.destination }}
