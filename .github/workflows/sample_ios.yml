@@ -17,7 +17,7 @@ jobs:
     
     strategy:
       matrix:
-        destination: ['platform=iOS Simulator,OS=13.3,name=iPhone 11']
+        destination: ['platform=iOS Simulator,OS=14.3,name=iPhone 12']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -53,7 +53,8 @@ jobs:
         set -o pipefail
         xcodebuild -workspace Sample.xcworkspace \
            -scheme Sample \
-           -configuration Debug \
+           -sdk iphonesimulator \
+           -destination ${{ matrix.destination }} \
            build | xcpretty -c
 
       #CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
