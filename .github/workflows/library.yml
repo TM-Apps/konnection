@@ -38,4 +38,7 @@ jobs:
       run: ./gradlew :konnection:build #:konnection:generateDummyFramework
 
     - name: publishing library
+      env:
+        BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+        BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
       run: ./gradlew :konnection:bintrayUpload
