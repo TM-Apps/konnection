@@ -76,8 +76,8 @@ publishing {
 }
 
 bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    user = project.findProperty('bintrayUser') ?: System.getenv('BINTRAY_USER')
+    key = project.findProperty('bintrayApiKey') ?: System.getenv('BINTRAY_API_KEY')
 
   // configurations = ['archives']
     publications = ['mavenProject'] // 'release'
