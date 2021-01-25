@@ -51,7 +51,6 @@ jobs:
       run: |
         cd samples/ios
         set -o pipefail
-        pod install
         xcodebuild -workspace Sample.xcworkspace \
            -scheme Sample \
            -sdk iphonesimulator \
