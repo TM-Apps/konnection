@@ -22,21 +22,21 @@ Pod::Spec.new do |spec|
         'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
     }
 
-#    spec.script_phases = [
-#         {
-#             :name => 'Build Konnection library',
-#             :execution_position => :before_compile,
-#             :shell_path => '/bin/sh',
-#             :script => <<-SCRIPT
-#                 set -ev
-#                 REPO_ROOT="$PODS_TARGET_SRCROOT"
-#                 "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" :konnection:syncFramework \
-#                     -Pkotlin.native.cocoapods.target=$KOTLIN_TARGET \
-#                     -Pkotlin.native.cocoapods.configuration=$CONFIGURATION \
-#                     -Pkotlin.native.cocoapods.cflags="$OTHER_CFLAGS" \
-#                     -Pkotlin.native.cocoapods.paths.headers="$HEADER_SEARCH_PATHS" \
-#                     -Pkotlin.native.cocoapods.paths.frameworks="$FRAMEWORK_SEARCH_PATHS"
-#             SCRIPT
-#         }
-#     ]
+    spec.script_phases = [
+        {
+            :name => 'Build Konnection library',
+            :execution_position => :before_compile,
+            :shell_path => '/bin/sh',
+            :script => <<-SCRIPT
+                set -ev
+                REPO_ROOT="$PODS_TARGET_SRCROOT"
+                "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" :konnection:syncFramework \
+                    -Pkotlin.native.cocoapods.target=$KOTLIN_TARGET \
+                    -Pkotlin.native.cocoapods.configuration=$CONFIGURATION \
+                    -Pkotlin.native.cocoapods.cflags="$OTHER_CFLAGS" \
+                    -Pkotlin.native.cocoapods.paths.headers="$HEADER_SEARCH_PATHS" \
+                    -Pkotlin.native.cocoapods.paths.frameworks="$FRAMEWORK_SEARCH_PATHS"
+            SCRIPT
+        }
+    ]
 end
