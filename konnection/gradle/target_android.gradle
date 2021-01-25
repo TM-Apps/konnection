@@ -37,7 +37,8 @@ android {
 
 kotlin {
     android {
-        publishAllLibraryVariants()
+        publishLibraryVariants("release") //, "debug"
+     // publishAllLibraryVariants()
     }
 
     sourceSets {

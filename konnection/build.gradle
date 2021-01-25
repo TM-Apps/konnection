@@ -5,13 +5,13 @@ plugins {
     id 'io.gitlab.arturbosch.detekt' version "1.15.0"
 }
 
+group = 'com.tmapps'
+version = '1.0.0'
+
 apply from: rootProject.file("gradle/targets.gradle")
 apply from: project.file("gradle/target_android.gradle")
 apply from: project.file("gradle/target_ios.gradle")
 apply from: project.file("gradle/publishing.gradle")
-
-group = 'com.tmapps'
-version = '1.0.0'
 
 repositories {
     google()
