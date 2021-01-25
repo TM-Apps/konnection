@@ -1,11 +1,11 @@
-package com.tmapps.konnection.sample
+package dev.tmapps.konnection.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.setContent
 import androidx.core.view.WindowCompat
-import com.tmapps.konnection.sample.ui.Home
-import com.tmapps.konnection.sample.ui.theme.SampleTheme
+import dev.tmapps.konnection.sample.ui.Home
+import dev.tmapps.konnection.sample.ui.theme.SampleTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

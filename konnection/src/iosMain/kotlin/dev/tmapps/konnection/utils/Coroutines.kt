@@ -1,4 +1,4 @@
-package com.tmapps.konnection.utils
+package dev.tmapps.konnection.utils
 
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineDispatcher

@@ -1,6 +1,6 @@
-package com.tmapps.konnection
+package dev.tmapps.konnection
 
-import com.tmapps.konnection.utils.MainScope
+import dev.tmapps.konnection.utils.MainScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 

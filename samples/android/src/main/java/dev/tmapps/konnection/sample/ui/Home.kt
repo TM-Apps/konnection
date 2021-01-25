@@ -1,4 +1,4 @@
-package com.tmapps.konnection.sample.ui
+package dev.tmapps.konnection.sample.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -14,9 +14,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import com.tmapps.konnection.Konnection
-import com.tmapps.konnection.NetworkConnection
-import com.tmapps.konnection.sample.ui.theme.SampleTheme
+import dev.tmapps.konnection.Konnection
+import dev.tmapps.konnection.NetworkConnection
+import dev.tmapps.konnection.sample.ui.theme.SampleTheme
 
 @Composable
 fun LoadingState(overlayColor: Color = Color.Transparent) {

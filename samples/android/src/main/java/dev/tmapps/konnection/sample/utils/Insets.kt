@@ -16,7 +16,7 @@
 
 @file:Suppress("NOTHING_TO_INLINE", "unused")
 
-package com.tmapps.konnection.sample.utils
+package dev.tmapps.konnection.sample.utils
 
 import android.view.View
 import androidx.compose.foundation.layout.PaddingValues

@@ -1,4 +1,4 @@
-package com.tmapps.konnection
+package dev.tmapps.konnection
 
 import kotlinx.coroutines.flow.Flow
 

@@ -1,4 +1,4 @@
-package com.tmapps.konnection.sample.ui.theme
+package dev.tmapps.konnection.sample.ui.theme
 
 import androidx.compose.material.Colors
 import androidx.compose.material.Surface

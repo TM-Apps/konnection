@@ -1,4 +1,4 @@
-package com.tmapps.konnection.sample.ui
+package dev.tmapps.konnection.sample.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.outlined.SignalCellular4Bar
 import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.tmapps.konnection.NetworkConnection
+import dev.tmapps.konnection.NetworkConnection
 import com.tmapps.konnection.sample.R
 
 val NetworkConnection.icon: ImageVector

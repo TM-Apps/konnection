@@ -1,4 +1,4 @@
-package com.tmapps.konnection
+package dev.tmapps.konnection
 
 import android.annotation.TargetApi
 import android.content.Context
