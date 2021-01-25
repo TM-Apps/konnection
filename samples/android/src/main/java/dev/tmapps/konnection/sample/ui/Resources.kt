@@ -7,7 +7,7 @@ import androidx.compose.material.icons.outlined.SignalCellular4Bar
 import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.ui.graphics.vector.ImageVector
 import dev.tmapps.konnection.NetworkConnection
-import com.tmapps.konnection.sample.R
+import dev.tmapps.konnection.sample.R
 
 val NetworkConnection.icon: ImageVector
     get() = when (this) {
