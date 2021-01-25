@@ -35,7 +35,7 @@ bintray {
 
             gpg {
                 sign = true // determines whether to GPG sign the files. The default is false
-                passphrase = System.getenv('BINTRAY_PASSPHRASE')
+                // passphrase = System.getenv('BINTRAY_PASSPHRASE')
                 // optional. The passphrase for GPG signing'
             }
         }

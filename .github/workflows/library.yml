@@ -38,4 +38,4 @@ jobs:
       run: ./gradlew :konnection:build #:konnection:generateDummyFramework
 
     - name: publishing library
-      run: ./gradlew :konnection:bintrayUpload #:konnection:generateDummyFramework
+      run: ./gradlew :konnection:bintrayUpload
