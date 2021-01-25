@@ -3,6 +3,14 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'com.jfrog.bintray'
 
+task stubSources(type: Jar) {
+    from kotlin.sourceSets.commonMain.kotlin
+    archiveClassifier.set("sources")
+}
+task stubJavadoc(type: Jar) {
+    archiveClassifier.set("javadoc")
+}
+
 /*
 afterEvaluate {
     project.publishing.publications.all {
@@ -61,13 +69,12 @@ publishing {
             groupId project.group
             artifactId project.name
             version project.version
+
+            artifact stubSources
+            artifact stubJavadoc
 /*
             if (project.name.endsWith('android')) {
                 artifact("$buildDir/outputs/aar/konnection-android-debug.aar")
-            }
-            artifact sourceJar
-            artifact emptyJar {
-                classifier 'javadoc'
             }
 */
             withPom(pom)
@@ -120,4 +127,9 @@ bintrayUpload.doFirst {
     }.findAll {
         it != "kotlinMultiplatform"
     }*/
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
