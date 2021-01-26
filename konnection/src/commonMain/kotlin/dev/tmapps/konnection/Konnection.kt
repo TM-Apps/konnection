@@ -9,6 +9,4 @@ enum class NetworkConnection {
 expect class Konnection {
     fun isConnected(): Boolean
     fun observeConnection(): Flow<NetworkConnection>
-    /** stops the emission of the connection state. */
-    fun stopConnectionPublishing()
 }

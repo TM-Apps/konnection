@@ -10,8 +10,8 @@ class KonnectionWrapper {
 
     fun hasNetworkConnection(): Boolean = konnection.isConnected()
 
-    fun stopObservation() {
-        konnection.stopConnectionPublishing()
+    fun stop() {
+        konnection.stop()
     }
 
     fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {

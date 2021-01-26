@@ -49,10 +49,6 @@ actual class Konnection(context: Context) {
 
     actual fun observeConnection(): Flow<NetworkConnection> = connectionPublisher.asFlow()
 
-    actual fun stopConnectionPublishing() {
-        // Android doesn't need to do anything here
-    }
-
     @TargetApi(Build.VERSION_CODES.M)
     private fun postAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean {
         val network = connectivityManager.activeNetwork

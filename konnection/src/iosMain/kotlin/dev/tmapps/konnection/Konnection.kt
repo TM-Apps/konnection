@@ -140,7 +140,7 @@ actual class Konnection {
             }
         }
 
-    actual fun stopConnectionPublishing() {
+    fun stop() {
         NSNotificationCenter.defaultCenter.removeObserver(notificationObserver)
         SCNetworkReachabilitySetCallback(reachabilityRef, null, null)
         SCNetworkReachabilitySetDispatchQueue(reachabilityRef, null)
