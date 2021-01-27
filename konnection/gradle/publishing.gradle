@@ -56,14 +56,14 @@ def withPom = { pom ->
 }
 
 publishing {
-    repositories {
-        maven {
-            url  = 'https://dl.bintray.com/tmapps/maven'
-        }
-    }
+ // repositories {
+ //     maven {
+ //         url  = 'https://dl.bintray.com/tmapps/maven'
+ //     }
+ // }
 
     publications {
-        mavenProject(MavenPublication) {
+        kotlinMultiplatform {
             groupId project.group
             artifactId project.name
             version project.version
@@ -120,9 +120,9 @@ bintray {
 // It is not necessary to have the findAll part,
 // [project name]-kotlinMultiplatform but a directory containing only pom files will be uploaded, so it is better to exclude it.
 bintrayUpload.doFirst {
-    publications = project.publishing.publications.collect {
-        it.name
-    }.findAll {
-        it != "kotlinMultiplatform"
-    }
+    publications = project.publishing.publications // .collect {
+ //     it.name
+ // }.findAll {
+ //     it != "kotlinMultiplatform"
+ // }
 }
