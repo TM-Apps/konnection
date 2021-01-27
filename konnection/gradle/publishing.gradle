@@ -123,6 +123,8 @@ publishing {
     }
 }
 
+publish.dependsOn publishToMavenLocal
+
 bintray {
     user = project.findProperty('bintrayUser') ?: System.getenv('BINTRAY_USER')
     key = project.findProperty('bintrayApiKey') ?: System.getenv('BINTRAY_API_KEY')
