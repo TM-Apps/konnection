@@ -11,19 +11,18 @@ task stubJavadoc(type: Jar) {
     archiveClassifier.set("javadoc")
 }
 
-/*
 afterEvaluate {
     project.publishing.publications.all {
+
         // rename artifacts
         groupId = project.group
         if (it.name.contains('metadata')) {
-            artifactId = "$libraryName"
+            artifactId = "${project.name}"
         } else {
-            artifactId = "$libraryName-$name"
+            artifactId = "${project.name}-$name"
         }
     }
 }
-*/
 
 def pomConfig = {
     licenses {
@@ -122,9 +121,9 @@ bintray {
 // It is not necessary to have the findAll part,
 // [project name]-kotlinMultiplatform but a directory containing only pom files will be uploaded, so it is better to exclude it.
 bintrayUpload.doFirst {
-    publications = project.publishing.publications /*.collect {
+    publications = project.publishing.publications.collect {
         it.name
     }.findAll {
         it != "kotlinMultiplatform"
-    }*/
+    }
 }

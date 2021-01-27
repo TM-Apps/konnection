@@ -10,7 +10,11 @@ kotlin {
  // final def buildForDevice = project.findProperty('device')?.toBoolean() ?: false
 
     iosX64()
- // iosArm32()
+ // iosArm32() {
+ //     binaries {
+ //         framework()
+ //     }
+ // }
     iosArm64()
 
     sourceSets {
