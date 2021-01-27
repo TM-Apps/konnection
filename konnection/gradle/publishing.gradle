@@ -4,7 +4,7 @@ apply plugin: 'signing'
 apply plugin: 'com.jfrog.bintray'
 
 task stubSources(type: Jar) {
-    from kotlin.sourceSets.commonMain.kotlin
+ // from kotlin.sourceSets.commonMain.kotlin
     archiveClassifier.set("sources")
 }
 task stubJavadoc(type: Jar) {
@@ -13,7 +13,6 @@ task stubJavadoc(type: Jar) {
 
 afterEvaluate {
     project.publishing.publications.all {
-
         // rename artifacts
         groupId = project.group
         if (it.name.contains('metadata')) {
