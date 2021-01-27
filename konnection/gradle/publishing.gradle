@@ -70,11 +70,11 @@ publishing {
 
             artifact stubSources
             artifact stubJavadoc
-/*
-            if (project.name.endsWith('android')) {
-                artifact("$buildDir/outputs/aar/konnection-android-debug.aar")
-            }
-*/
+
+  //        if (project.name.endsWith('android')) {
+  //            artifact("$buildDir/outputs/aar/konnection-android-debug.aar")
+  //        }
+
             withPom(pom)
         }
     }
@@ -85,7 +85,7 @@ bintray {
     key = project.findProperty('bintrayApiKey') ?: System.getenv('BINTRAY_API_KEY')
 
   // configurations = ['archives']
-    publications = ['mavenProject'] // 'release'
+  // publications = ['mavenProject']
 
     publish = true // make files public
     override = true // override existing artifact
