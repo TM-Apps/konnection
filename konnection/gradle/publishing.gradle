@@ -3,12 +3,35 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'com.jfrog.bintray'
 
-task stubSources(type: Jar) {
- // from kotlin.sourceSets.commonMain.kotlin
-    archiveClassifier.set("sources")
+task emptyJar(type: Jar) {
+    archiveAppendix.set("empty")
 }
-task stubJavadoc(type: Jar) {
-    archiveClassifier.set("javadoc")
+
+def selectArtifactId(project, type, defaultName) {
+    def name = project.name
+    def isCommon = project.ext.has("commonStructure")
+    def commonIsRoot = project.ext.has("commonStructure") && project.ext.commonStructure
+    def hasNative = project.ext.has("hasNative") && project.ext.hasNative
+
+    switch (type) {
+        case 'metadata':
+            if (!isCommon) return "$name-$type"
+            return "$name-metadata"
+            break
+        case 'kotlinMultiplatform':
+            if (!hasNative) return "$name-kotlinMultiplatform"
+            return name
+            break
+        case 'android':
+            return commonIsRoot ? "$name-jvm" : "$name"
+            break
+        case 'jvm':
+            return commonIsRoot ? "$name-android" : "$name"
+            break
+        default:
+            return isCommon || hasNative ? defaultName : "$name"
+            break
+    }
 }
 
 afterEvaluate {
@@ -46,13 +69,11 @@ def pomConfig = {
 }
 
 def withPom = { pom ->
-    pom.withXml {
-        def root = asNode()
-        root.appendNode('name', project.name)
-        root.appendNode('description', 'A Kotlin Multiplatform Mobile library to emit Network Connection status.')
-        root.appendNode('url', 'https://github.com/TM-Apps/konnection')
-        root.children().last() + pomConfig
-    }
+    def root = asNode()
+    root.appendNode('name', project.name)
+    root.appendNode('description', 'A Kotlin Multiplatform Mobile library to emit Network Connection status.')
+    root.appendNode('url', 'https://github.com/TM-Apps/konnection')
+    root.children().last() + pomConfig
 }
 
 publishing {
@@ -62,20 +83,42 @@ publishing {
  //     }
  // }
 
-    publications {
-        kotlinMultiplatform {
-            groupId project.group
-            artifactId project.name
-            version project.version
+    publications.all {
+        pom.withXml(withPom)
 
-            artifact stubSources
-            artifact stubJavadoc
+        def type = it.name
+        def id = selectArtifactId(project, type, it.artifactId)
+        it.artifactId = id
 
-  //        if (project.name.endsWith('android')) {
-  //            artifact("$buildDir/outputs/aar/konnection-android-debug.aar")
-  //        }
+        if (name == "kotlinMultiplatform") {
+            it.artifact(emptyJar) { classifier 'javadoc' }
+            it.artifact(emptyJar) { classifier 'kdoc' }
+        }
+    }
 
-            withPom(pom)
+  // if (rootProject.ext.nonDefaultProjectStructure.contains(project.name)) return
+
+    kotlin.targets.all { target ->
+        def publication = publishing.publications.findByName(target.name)
+
+        if (publication != null) {
+            if (target.platformType.name == 'jvm') {
+                publication.artifact(emptyJar) {
+                    classifier 'javadoc'
+                }
+                publication.artifact dokkaJar
+            } else {
+                publication.artifact(emptyJar) {
+                    classifier 'javadoc'
+                }
+                publication.artifact(emptyJar) {
+                    classifier 'kdoc'
+                }
+            }
+
+            if (target.platformType.name == 'native') {
+                publication.artifact emptyJar
+            }
         }
     }
 }
