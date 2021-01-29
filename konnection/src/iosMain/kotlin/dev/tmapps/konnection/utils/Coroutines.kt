@@ -9,7 +9,7 @@ import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_queue_t
 
-class CoroutineDispatcherBuilder(
+internal class CoroutineDispatcherBuilder(
     private val dispatchQueue: dispatch_queue_t
 ) : CoroutineDispatcher() {
     override fun dispatch(context: CoroutineContext, block: Runnable) {
@@ -19,7 +19,7 @@ class CoroutineDispatcherBuilder(
     }
 }
 
-val MainDispatcher: CoroutineDispatcher =
+internal val MainDispatcher: CoroutineDispatcher =
     CoroutineDispatcherBuilder(dispatch_get_main_queue())
 
 internal class MainScope: CoroutineScope {
