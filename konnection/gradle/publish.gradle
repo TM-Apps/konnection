@@ -1,0 +1,83 @@
+apply plugin: 'maven-publish'
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "magnumrocha"
+            name 'Magnum Rocha'
+            organization 'TMApps'
+            organizationUrl 'http://github.com/TM-Apps'
+        }
+    }
+
+    scm {
+        url 'https://github.com/TM-Apps/konnection'
+    }
+}
+
+def withPom = { pom ->
+    def root = asNode()
+    root.appendNode('name', project.name)
+    root.appendNode('description', 'A Kotlin Multiplatform Mobile library to emit Network Connection status.')
+    root.appendNode('url', 'https://github.com/TM-Apps/konnection')
+    root.children().last() + pomConfig
+}
+
+def sonatypeUser = System.getenv('SONATYPE_USER')
+def sonatypePassword = System.getenv('SONATYPE_PASSWORD')
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+ // from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier 'javadoc'
+ // from javadoc
+}
+
+nexusStaging {
+    username sonatypeUser
+    password sonatypePassword
+    packageGroup project.group.toString()
+    repositoryDescription "konection staging repository, version: $version"
+}
+
+publishing {
+    publications.all { publication ->
+        pom.withXml(withPom)
+
+        if (name == "kotlinMultiplatform") {
+            publication.artifact(sourcesJar) { classifier "sources" }
+            publication.artifact(javadocJar) { classifier "javadoc" }
+        }
+    }
+    repositories {
+        maven {
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = sonatypeUser
+                password = sonatypePassword
+            }
+        }
+    }
+}
+
+def signingKeyId = System.getenv("SIGN_KEY_ID")
+def signingKey = System.getenv("SIGN_KEY_PRIVATE")
+def signingPassword = System.getenv("SIGN_KEY_PASSPHRASE")
+
+if (signingKey != null) {
+    apply plugin: 'signing'
+    signing {
+        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+        sign publishing.publications
+    }
+}

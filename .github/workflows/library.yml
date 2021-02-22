@@ -39,6 +39,9 @@ jobs:
 
     - name: publish
       env:
-        BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-        BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
+        SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
+        SIGN_KEY_PASSPHRASE: ${{ secrets.SIGN_KEY_PASSPHRASE }}
+        SIGN_KEY_PRIVATE: ${{ secrets.SIGN_KEY_PRIVATE }}
       run: ./gradlew :konnection:bintrayUpload

@@ -6,13 +6,19 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+        //Needed only for SNAPSHOT versions
+     // maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.android.tools.build:gradle:7.0.0-alpha04'
+        classpath 'com.android.tools.build:gradle:7.0.0-alpha07'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.22.0"
     }
 }
+
+apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {
     // the only place where HostManager could be instantiated

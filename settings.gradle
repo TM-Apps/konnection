@@ -11,5 +11,4 @@ pluginManagement {
 include 'konnection'
 include 'samples:android'
 
-// for kotlinx-serialization plugin
-//enableFeaturePreview('GRADLE_METADATA')
+enableFeaturePreview('GRADLE_METADATA')

@@ -6,22 +6,53 @@ A Kotlin Multiplatform Mobile library to emit Network Connection status.
 
 ## Add to your project
 
-### common
+### build.gradle
 ```groovy
-implementation "dev.tmapps:konnection:1.0.0"
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "dev.tmapps:konnection:1.0.0"
+}
 ```
 
-### iOS
+### build.gradle.kts
 ```groovy
-implementation "dev.tmapps:konnection-ios:1.0.0"
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("dev.tmapps:konnection:1.0.0")
+}
 ```
 
-### Android
+### Multiplatform (Common, Android, iOS)
+In common code that should get compiled for different platforms, you can add dependency right to the `commonMain` source set:
 ```groovy
-implementation "dev.tmapps:konnection-android:1.0.0"
+commonMain {
+    dependencies {
+        // Works as common dependency as well as the platform one
+        implementation("dev.tmapps:konnection:1.0.0")
+    }
+}
 ```
 
 ## Usage
+
+### on Android
+```kotlin
+// instantiate the Konnection class with a android.content.Context
+val konnection = Konnection(context)
+
+// get the immediate connection state
+val hasNetworkConnection = konnection.isConnected()
+
+// observes current NetworkConnection (WIFI, MOBILE, NONE) state.
+konnection.observeConnection()
+    .collect { state -> ... }
+```
 
 ### on iOS
 
@@ -45,19 +76,6 @@ fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
 konnection.stop()
 ```
 
-### on Android
-```kotlin
-// instantiate the Konnection class with a android.content.Context
-val konnection = Konnection(context)
-
-// get the immediate connection state
-val hasNetworkConnection = konnection.isConnected()
-
-// observes current NetworkConnection (WIFI, MOBILE, NONE) state.
-konnection.observeConnection()
-    .collect { state -> ... }
-```
- 
 ## License
 
     Copyright 2021 TMApps
