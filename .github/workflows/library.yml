@@ -44,4 +44,4 @@ jobs:
         SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
         SIGN_KEY_PASSPHRASE: ${{ secrets.SIGN_KEY_PASSPHRASE }}
         SIGN_KEY_PRIVATE: ${{ secrets.SIGN_KEY_PRIVATE }}
-      run: ./gradlew :konnection:bintrayUpload
+      run: ./gradlew :konnection:publish
