@@ -71,7 +71,7 @@ fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
 }
 
 // stops the publishing of connection state.
-// this is necessary because to stops and clear the internal SCNetworkReachability references
+// this is necessary to stops and clear the internal SCNetworkReachability references
 // and free the created pointers on native heap memory  
 konnection.stop()
 ```
