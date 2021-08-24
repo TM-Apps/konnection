@@ -1,6 +1,7 @@
 package dev.tmapps.konnection
 
 import dev.tmapps.konnection.utils.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -12,10 +13,11 @@ class KonnectionWrapper {
 
     fun stop() {
         konnection.stop()
+     // mainScope.cancel()
     }
 
     fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
-        konnection.observeConnection()
+        konnection.observeNetworkConnection()
             .onEach { callback(it) }
             .launchIn(mainScope)
     }

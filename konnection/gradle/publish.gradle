@@ -33,12 +33,12 @@ def withPom = { pom ->
 def sonatypeUser = System.getenv('SONATYPE_USER')
 def sonatypePassword = System.getenv('SONATYPE_PASSWORD')
 
-task sourcesJar(type: Jar) {
+task libSourcesJar(type: Jar) {
     classifier 'sources'
  // from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar) {
+task libJavadocJar(type: Jar) {
     classifier 'javadoc'
  // from javadoc
 }
@@ -55,8 +55,8 @@ publishing {
         pom.withXml(withPom)
 
         if (name == "kotlinMultiplatform") {
-            publication.artifact(sourcesJar) { classifier "sources" }
-            publication.artifact(javadocJar) { classifier "javadoc" }
+            publication.artifact(libSourcesJar) { classifier "sources" }
+            publication.artifact(libJavadocJar) { classifier "javadoc" }
         }
     }
     repositories {

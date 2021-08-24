@@ -1,12 +1,12 @@
 plugins {
-    id 'kotlin-multiplatform'
-    id 'kotlin-native-cocoapods'
+    id 'org.jetbrains.kotlin.multiplatform'
+    id 'org.jetbrains.kotlin.native.cocoapods'
     id 'com.android.library'
     id 'io.gitlab.arturbosch.detekt' version "1.15.0"
 }
 
 group = 'dev.tmapps'
-version = '1.0.0'
+version = '1.1.0'
 
 apply from: rootProject.file("gradle/targets.gradle")
 apply from: project.file("gradle/target_android.gradle")
@@ -15,8 +15,7 @@ apply from: project.file("gradle/publish.gradle")
 
 repositories {
     google()
-    jcenter()
-    mavenLocal()
+    mavenCentral()
 }
 
 kotlin {
@@ -30,6 +29,7 @@ kotlin {
             //  enableLanguageFeature('InlineClasses') // language feature name
             }
         }
+
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
@@ -40,7 +40,16 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
+                implementation 'app.cash.turbine:turbine:0.6.0'
+             // implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
             }
+        }
+    }
+
+    sourceSets.matching { it.name.endsWith("Test") }.all {
+        it.languageSettings {
+            useExperimentalAnnotation("kotlin.RequiresOptIn")
+            useExperimentalAnnotation('kotlin.time.ExperimentalTime')
         }
     }
 }

@@ -7,16 +7,16 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 
 actual class Konnection(context: Context) {
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    private val connectionPublisher = ConflatedBroadcastChannel<NetworkConnection>()
+    private val connectionPublisher = MutableStateFlow(NetworkConnection.NONE)
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -39,39 +39,58 @@ actual class Konnection(context: Context) {
         }
     }
 
-    actual fun isConnected(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    actual fun isConnected(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             postAndroidMInternetCheck(connectivityManager)
         } else {
             preAndroidMInternetCheck(connectivityManager)
         }
-    }
 
-    actual fun observeConnection(): Flow<NetworkConnection> = connectionPublisher.asFlow()
+    actual fun observeHasConnection(): Flow<Boolean> =
+        connectionPublisher.map { it != NetworkConnection.NONE }
+
+    actual fun observeNetworkConnection(): Flow<NetworkConnection> = connectionPublisher
+
+    actual fun getCurrentNetworkConnection(): NetworkConnection =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            postAndroidMNetworkConnection(connectivityManager)
+        } else {
+            preAndroidMNetworkConnection(connectivityManager)
+        }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private fun postAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean {
+    private fun postAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean =
+        postAndroidMNetworkConnection(connectivityManager) != NetworkConnection.NONE
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun postAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection {
         val network = connectivityManager.activeNetwork
         val connection = connectivityManager.getNetworkCapabilities(network)
-
-        return connection != null && (
-                connection.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        connection.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
+        return when {
+            connection == null -> NetworkConnection.NONE
+            connection.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
+            else -> NetworkConnection.MOBILE
+        }
     }
 
     @Suppress("DEPRECATION")
-    private fun preAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean {
-        return connectivityManager.activeNetworkInfo?.isConnected == true
-    }
+    private fun preAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean =
+        preAndroidMNetworkConnection(connectivityManager) != NetworkConnection.NONE
+
+    @Suppress("DEPRECATION")
+    private fun preAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection =
+        when (connectivityManager.activeNetworkInfo?.type) {
+            null -> NetworkConnection.NONE
+            ConnectivityManager.TYPE_WIFI -> NetworkConnection.WIFI
+            else -> NetworkConnection.MOBILE
+        }
 
     private fun publishNetworkState(network: Network) {
         val connection = connectivityManager.getNetworkCapabilities(network)
-        connectionPublisher.offer(
-            when {
-                connection == null || !isConnected() -> NetworkConnection.NONE
-                connection.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
-                else -> NetworkConnection.MOBILE
-            }
-        )
+        connectionPublisher.value = when {
+            connection == null || !isConnected() -> NetworkConnection.NONE
+            connection.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
+            else -> NetworkConnection.MOBILE
+        }
     }
 }

@@ -1,5 +1,6 @@
 package dev.tmapps.konnection
 
+import dev.tmapps.konnection.utils.TriggerEvent
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.StableRef
@@ -14,9 +15,8 @@ import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.value
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
@@ -58,7 +58,7 @@ actual class Konnection {
     private val notificationObserver: NSObjectProtocol
     private val selfPtr: StableRef<Konnection>
 
-    private val reachabilityBroadcaster = ConflatedBroadcastChannel(Unit)
+    private val reachabilityBroadcaster = MutableStateFlow(TriggerEvent)
 
     init {
         val sizeSockaddr = sizeOf<sockaddr_in>()
@@ -78,7 +78,7 @@ actual class Konnection {
             name = "ReachabilityChangedNotification",
             `object` = null,
             queue = NSOperationQueue.mainQueue,
-            usingBlock = { reachabilityBroadcaster.offer(Unit) }
+            usingBlock = { reachabilityBroadcaster.value = TriggerEvent }
         )
 
         selfPtr = StableRef.create(this)
@@ -97,7 +97,7 @@ actual class Konnection {
             if (info == null) { return@staticCFunction }
 
             // println("SCNetworkReachabilityCallBack fired!")
-            // reachabilityBroadcaster.offer(Unit) -> not working: EXC_BAD_ACCESS!
+            // reachabilityBroadcaster.value = TriggerEvent -> not working: EXC_BAD_ACCESS!
 
             try {
                 NSNotificationCenter.defaultCenter.postNotificationName("ReachabilityChangedNotification", null)
@@ -125,20 +125,25 @@ actual class Konnection {
         return isReachable && !needsConnection
     }
 
-    actual fun observeConnection(): Flow<NetworkConnection> = reachabilityBroadcaster.asFlow()
-        .map {
-            val flags = getReachabilityFlags()
+    actual fun observeHasConnection(): Flow<Boolean> =
+        observeNetworkConnection().map { it != NetworkConnection.NONE }
 
-            val isReachable = flags.contains(kSCNetworkReachabilityFlagsReachable)
-            val needsConnection = flags.contains(kSCNetworkReachabilityFlagsConnectionRequired)
-            val isMobileConnection = flags.contains(kSCNetworkReachabilityFlagsIsWWAN)
+    actual fun getCurrentNetworkConnection(): NetworkConnection {
+        val flags = getReachabilityFlags()
 
-            when {
-                !isReachable || needsConnection -> NetworkConnection.NONE
-                isMobileConnection -> NetworkConnection.MOBILE
-                else -> NetworkConnection.WIFI
-            }
+        val isReachable = flags.contains(kSCNetworkReachabilityFlagsReachable)
+        val needsConnection = flags.contains(kSCNetworkReachabilityFlagsConnectionRequired)
+        val isMobileConnection = flags.contains(kSCNetworkReachabilityFlagsIsWWAN)
+
+        return when {
+            !isReachable || needsConnection -> NetworkConnection.NONE
+            isMobileConnection -> NetworkConnection.MOBILE
+            else -> NetworkConnection.WIFI
         }
+    }
+
+    actual fun observeNetworkConnection(): Flow<NetworkConnection> =
+        reachabilityBroadcaster.map { getCurrentNetworkConnection() }
 
     fun stop() {
         NSNotificationCenter.defaultCenter.removeObserver(notificationObserver)

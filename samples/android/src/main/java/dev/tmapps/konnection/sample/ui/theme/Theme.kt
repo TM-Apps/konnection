@@ -3,7 +3,7 @@ package dev.tmapps.konnection.sample.ui.theme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -20,8 +20,8 @@ private val ThemeElevation = Elevations(card = 4.dp)
 fun SampleTheme(
     content: @Composable () -> Unit
 ) {
-    Providers(
-        AmbientElevations provides ThemeElevation
+    CompositionLocalProvider(
+        LocalElevations provides ThemeElevation
     ) {
         MaterialTheme(
             colors = ThemeColors,

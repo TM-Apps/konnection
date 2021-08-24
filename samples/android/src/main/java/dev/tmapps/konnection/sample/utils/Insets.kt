@@ -22,14 +22,14 @@ import android.view.View
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.layout.IntrinsicMeasurable
@@ -38,7 +38,8 @@ import androidx.compose.ui.layout.LayoutModifier
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.platform.*
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -117,10 +118,10 @@ class Insets {
         internal set
 }
 
-val AmbientInsets = staticAmbientOf { DisplayInsets() }
+val LocalInsets = staticCompositionLocalOf { DisplayInsets() }
 
 /**
- * Applies any [WindowInsetsCompat] values to [AmbientInsets], which are then available
+ * Applies any [WindowInsetsCompat] values to [LocalInsets], which are then available
  * within [content].
  *
  * @param consumeWindowInsets Whether to consume any [WindowInsetsCompat]s which are dispatched to
@@ -131,11 +132,11 @@ fun ProvideDisplayInsets(
     consumeWindowInsets: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val view = AmbientView.current
+    val view = LocalView.current
 
     val displayInsets = remember { DisplayInsets() }
 
-    onCommit(view) {
+    DisposableEffect(view) {
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, windowInsets ->
             displayInsets.systemBars.updateFrom(windowInsets, Type.systemBars())
             displayInsets.systemGestures.updateFrom(windowInsets, Type.systemGestures())
@@ -164,7 +165,7 @@ fun ProvideDisplayInsets(
         }
     }
 
-    Providers(AmbientInsets provides displayInsets) {
+    CompositionLocalProvider(LocalInsets provides displayInsets) {
         content()
     }
 }
@@ -191,7 +192,7 @@ private fun Insets.updateFrom(windowInsets: WindowInsetsCompat, type: Int) {
  */
 fun Modifier.systemBarsPadding(enabled: Boolean = true) = composed {
     insetsPadding(
-        insets = AmbientInsets.current.systemBars,
+        insets = LocalInsets.current.systemBars,
         left = enabled,
         top = enabled,
         right = enabled,
@@ -204,7 +205,7 @@ fun Modifier.systemBarsPadding(enabled: Boolean = true) = composed {
  * of the content.
  */
 fun Modifier.statusBarsPadding() = composed {
-    insetsPadding(insets = AmbientInsets.current.statusBars, top = true)
+    insetsPadding(insets = LocalInsets.current.statusBars, top = true)
 }
 
 /**
@@ -225,7 +226,7 @@ fun Modifier.navigationBarsPadding(
     right: Boolean = true
 ) = composed {
     insetsPadding(
-        insets = AmbientInsets.current.navigationBars,
+        insets = LocalInsets.current.navigationBars,
         left = left,
         right = right,
         bottom = bottom
@@ -259,7 +260,7 @@ fun Modifier.navigationBarsPadding(
  */
 fun Modifier.statusBarsHeight(additional: Dp = 0.dp) = composed {
     InsetsSizeModifier(
-        insets = AmbientInsets.current.statusBars,
+        insets = LocalInsets.current.statusBars,
         heightSide = VerticalSide.Top,
         additionalHeight = additional
     )
@@ -311,7 +312,7 @@ inline fun Modifier.statusBarsHeight() = statusBarsHeightPlus(0.dp)
  */
 fun Modifier.statusBarsHeightPlus(additional: Dp) = composed {
     InsetsSizeModifier(
-        insets = AmbientInsets.current.statusBars,
+        insets = LocalInsets.current.statusBars,
         heightSide = VerticalSide.Top,
         additionalHeight = additional
     )
@@ -363,7 +364,7 @@ inline fun Modifier.navigationBarsHeight() = navigationBarsHeightPlus(0.dp)
  */
 fun Modifier.navigationBarsHeightPlus(additional: Dp) = composed {
     InsetsSizeModifier(
-        insets = AmbientInsets.current.navigationBars,
+        insets = LocalInsets.current.navigationBars,
         heightSide = VerticalSide.Bottom,
         additionalHeight = additional
     )
@@ -417,7 +418,7 @@ fun Modifier.navigationBarsWidthPlus(
     additional: Dp
 ) = composed {
     InsetsSizeModifier(
-        insets = AmbientInsets.current.navigationBars,
+        insets = LocalInsets.current.navigationBars,
         widthSide = side,
         additionalWidth = additional
     )
@@ -437,25 +438,25 @@ fun Insets.toPaddingValues(
     top: Boolean = true,
     end: Boolean = true,
     bottom: Boolean = true
-): PaddingValues = with(AmbientDensity.current) {
-    val layoutDirection = AmbientLayoutDirection.current
+): PaddingValues = with(LocalInsets.current) {
+    val layoutDirection = LocalLayoutDirection.current
     PaddingValues(
         start = when {
-            start && layoutDirection == LayoutDirection.Ltr -> this@toPaddingValues.left.toDp()
-            start && layoutDirection == LayoutDirection.Rtl -> this@toPaddingValues.right.toDp()
+            start && layoutDirection == LayoutDirection.Ltr -> this@toPaddingValues.left.dp
+            start && layoutDirection == LayoutDirection.Rtl -> this@toPaddingValues.right.dp
             else -> 0.dp
         },
         top = when {
-            top -> this@toPaddingValues.top.toDp()
+            top -> this@toPaddingValues.top.dp
             else -> 0.dp
         },
         end = when {
-            end && layoutDirection == LayoutDirection.Ltr -> this@toPaddingValues.right.toDp()
-            end && layoutDirection == LayoutDirection.Rtl -> this@toPaddingValues.left.toDp()
+            end && layoutDirection == LayoutDirection.Ltr -> this@toPaddingValues.right.dp
+            end && layoutDirection == LayoutDirection.Rtl -> this@toPaddingValues.left.dp
             else -> 0.dp
         },
         bottom = when {
-            bottom -> this@toPaddingValues.bottom.toDp()
+            bottom -> this@toPaddingValues.bottom.dp
             else -> 0.dp
         }
     )
@@ -511,8 +512,8 @@ private data class InsetsSizeModifier(
 ) : LayoutModifier {
     private val Density.targetConstraints: Constraints
         get() {
-            val additionalWidthPx = additionalWidth.toIntPx()
-            val additionalHeightPx = additionalHeight.toIntPx()
+            val additionalWidthPx = additionalWidth.roundToPx()
+            val additionalHeightPx = additionalHeight.roundToPx()
             return Constraints(
                 minWidth = additionalWidthPx + when (widthSide) {
                     HorizontalSide.Left -> insets.left

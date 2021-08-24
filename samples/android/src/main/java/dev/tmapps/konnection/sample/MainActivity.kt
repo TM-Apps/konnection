@@ -2,7 +2,7 @@ package dev.tmapps.konnection.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.platform.setContent
+import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import dev.tmapps.konnection.sample.ui.Home
 import dev.tmapps.konnection.sample.ui.theme.SampleTheme

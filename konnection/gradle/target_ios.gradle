@@ -19,23 +19,15 @@ kotlin {
 
     sourceSets {
         iosMain {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(it)
+         // iosArm32Main.dependsOn(it)
+            iosArm64Main.dependsOn(it)
         }
-
         iosTest {
-        }
-
-     // iosX64Main {
-     // }
-
-     // iosArm32Main {
-     // }
-
-     // iosArm64Main {
-     // }
-
-        configure([targets.iosX64, /*targets.iosArm32,*/ targets.iosArm64]) {
-           compilations.main.source(sourceSets.iosMain)
-           compilations.test.source(sourceSets.iosTest)
+            iosX64Test.dependsOn(it)
+         // iosArm32Test.dependsOn(it)
+            iosArm64Test.dependsOn(it)
         }
     }
 
