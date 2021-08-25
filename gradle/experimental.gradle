@@ -1,4 +1,4 @@
-// For new mpp
+// for new mpp
 ext.experimentalAnnotations = [
     "kotlin.experimental.ExperimentalTypeInference",
     "kotlin.ExperimentalMultiplatform",
