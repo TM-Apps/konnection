@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class CoroutinesTests {
-/*
+
     @Test
     fun `test MutableStateFlow of TriggerEvent`() = runTest {
         val myStateFlow = MutableStateFlow(TriggerEvent)
@@ -25,5 +25,4 @@ class CoroutinesTests {
 
         assertEquals(3, emissions)
     }
-*/
 }
