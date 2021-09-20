@@ -9,7 +9,9 @@ import SwiftUI
 import Konnection
 
 struct ContentView: View {
-    @State var connection: NetworkConnection = .none
+    @State var connection: NetworkConnection? = nil
+    @State var ipv4: String? = nil
+    @State var ipv6: String? = nil
 
     private let konnection = KonnectionWrapper()
 
@@ -30,6 +32,18 @@ struct ContentView: View {
                     .font(.title2)
                     .bold()
                     .padding([.bottom, .horizontal])
+
+                Text(ipv4 ?? "")
+                    .foregroundColor(.white)
+                    .font(.title3)
+                    .bold()
+                    .padding([.bottom, .horizontal])
+
+                Text(ipv6 ?? "")
+                    .foregroundColor(.white)
+                    .font(.title3)
+                    .bold()
+                    .padding([.bottom, .horizontal])
             }
         }
         .onAppear { onViewAppear() }
@@ -38,6 +52,12 @@ struct ContentView: View {
     private func onViewAppear() {
         konnection.networkConnectionObservation() { [self] networkConnection in
             self.connection = networkConnection
+        }
+        konnection.ipv4Observation() { [self] ipv4 in
+            self.ipv4 = ipv4
+        }
+        konnection.ipv6Observation() { [self] ipv6 in
+            self.ipv6 = ipv6
         }
     }
 }
@@ -54,24 +74,28 @@ extension Color {
     }
 }
 
-extension NetworkConnection {
+extension Optional where Wrapped == NetworkConnection {
     var icon: String {
         get {
-            switch self {
+            guard let unwrapped = self else {
+                return "NoneConnection"
+            }
+            switch unwrapped {
                 case .wifi: return "WifiConnection"
                 case .mobile: return "MobileConnection"
-                case .none: return "NoneConnection"
                 default: return "UnKnown"
             }
         }
     }
 
-    public override var description: String {
+    var description: String {
         get {
-            switch self {
+            guard let unwrapped = self else {
+                return "No Connection"
+            }
+            switch unwrapped {
                 case .wifi: return "Connected By Wify"
                 case .mobile: return "Connected By Mobile Network"
-                case .none: return "No Connection"
                 default: return "UnKnown"
             }
         }

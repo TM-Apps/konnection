@@ -16,8 +16,20 @@ class KonnectionWrapper {
      // mainScope.cancel()
     }
 
-    fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
+    fun networkConnectionObservation(callback: (NetworkConnection?) -> Unit) {
         konnection.observeNetworkConnection()
+            .onEach { callback(it) }
+            .launchIn(mainScope)
+    }
+
+    fun ipv4Observation(callback: (String?) -> Unit) {
+        konnection.observeIpv4()
+            .onEach { callback(it) }
+            .launchIn(mainScope)
+    }
+
+    fun ipv6Observation(callback: (String?) -> Unit) {
+        konnection.observeIpv6()
             .onEach { callback(it) }
             .launchIn(mainScope)
     }

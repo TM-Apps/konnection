@@ -1,19 +1,23 @@
 package dev.tmapps.konnection
 
 import dev.tmapps.konnection.utils.TriggerEvent
+import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.StableRef
 import kotlinx.cinterop.alignOf
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.free
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
+import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,8 +47,14 @@ import platform.darwin.NSObjectProtocol
 import platform.darwin.dispatch_queue_t
 import platform.darwin.dispatch_queue_attr_make_with_qos_class
 import platform.darwin.dispatch_queue_create
+import platform.darwin.getifaddrs
+import platform.darwin.ifaddrs
 import platform.posix.AF_INET
+import platform.posix.AF_INET6
 import platform.posix.QOS_CLASS_DEFAULT
+import platform.posix.NI_MAXHOST
+import platform.posix.NI_NUMERICHOST
+import platform.posix.getnameinfo
 import platform.posix.sockaddr
 import platform.posix.sockaddr_in
 
@@ -126,9 +136,9 @@ actual class Konnection {
     }
 
     actual fun observeHasConnection(): Flow<Boolean> =
-        observeNetworkConnection().map { it != NetworkConnection.NONE }
+        observeNetworkConnection().map { it != null }
 
-    actual fun getCurrentNetworkConnection(): NetworkConnection {
+    actual fun getCurrentNetworkConnection(): NetworkConnection? {
         val flags = getReachabilityFlags()
 
         val isReachable = flags.contains(kSCNetworkReachabilityFlagsReachable)
@@ -136,14 +146,24 @@ actual class Konnection {
         val isMobileConnection = flags.contains(kSCNetworkReachabilityFlagsIsWWAN)
 
         return when {
-            !isReachable || needsConnection -> NetworkConnection.NONE
+            !isReachable || needsConnection -> null
             isMobileConnection -> NetworkConnection.MOBILE
             else -> NetworkConnection.WIFI
         }
     }
 
-    actual fun observeNetworkConnection(): Flow<NetworkConnection> =
+    actual fun observeNetworkConnection(): Flow<NetworkConnection?> =
         reachabilityBroadcaster.map { getCurrentNetworkConnection() }
+
+    actual fun getCurrentIpv4(): String? = getIfAddrs(AF_INET)
+
+    actual fun observeIpv4(): Flow<String?> =
+        reachabilityBroadcaster.map { getCurrentIpv4() }
+
+    actual fun getCurrentIpv6(): String? = getIfAddrs(AF_INET6)
+
+    actual fun observeIpv6(): Flow<String?> =
+        reachabilityBroadcaster.map { getCurrentIpv6() }
 
     fun stop() {
         NSNotificationCenter.defaultCenter.removeObserver(notificationObserver)
@@ -155,8 +175,8 @@ actual class Konnection {
     }
 
     private fun getReachabilityFlags(): Array<SCNetworkReachabilityFlags> = memScoped {
-     // val flags = allocArray<SCNetworkReachabilityFlagsVar>(10)
-     // val flags = allocArrayOf<SCNetworkReachabilityFlagsVar>()
+     // val flags = allocArray<SCNetworkReachabilityFlagsVar>(10) -> not working
+     // val flags = allocArrayOf<SCNetworkReachabilityFlagsVar>() -> not working
         val flags = alloc<SCNetworkReachabilityFlagsVar>()
 
         if (!SCNetworkReachabilityGetFlags(reachabilityRef, flags.ptr)) return emptyArray()
@@ -182,33 +202,31 @@ actual class Konnection {
         return result
     }
 
- //
- // Swift version:
- //
- // public func isConnectedToNetwork() -> Bool {
- //     var zeroAddress = sockaddr_in()
- //     zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
- //     zeroAddress.sin_family = sa_family_t(AF_INET)
- //
- //     guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
- //         $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
- //             SCNetworkReachabilityCreateWithAddress(nil, $0)
- //         }
- //     }) else {
- //         return false
- //     }
- //
- //     var flags: SCNetworkReachabilityFlags = []
- //     if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
- //         return false
- //     }
- //     if flags.isEmpty {
- //         return false
- //     }
- //
- //     let isReachable = flags.contains(.reachable)
- //     let needsConnection = flags.contains(.connectionRequired)
- //
- //     return (isReachable && !needsConnection)
- // }
+    private fun getIfAddrs(saFamily: Int): String? = memScoped {
+        val ifaddr = alloc<ifaddrs>()
+        if (getifaddrs(ifaddr.ptr.reinterpret()) == 0) {
+            var addr = ifaddr.ifa_next?.reinterpret<ifaddrs>()
+
+            while (addr != null) {
+                val socketAddr = addr.pointed.ifa_addr?.reinterpret<sockaddr>()
+                val currentSaFamily = socketAddr?.pointed?.sa_family
+
+                if (currentSaFamily?.toInt() == saFamily) {
+                    val socketName = addr.pointed.ifa_name?.reinterpret<ByteVar>()?.toKString() ?: return@memScoped null
+                 // println("socketName = $socketName")
+                    if (socketName == "en0") {
+                        val saLen = socketAddr.pointed.sa_len
+                        val hostname = allocArray<ByteVar>(length = NI_MAXHOST)
+                        getnameinfo(socketAddr, saLen.toUInt(), hostname, NI_MAXHOST, null, 0, NI_NUMERICHOST)
+                  //    println("hostname = ${hostname.pointed.value} | saLen.toUInt() = ${saLen.toUInt()}")
+                  //    println("ipValue = ${hostname.toKString()}")
+                        return@memScoped hostname.toKString()
+                    }
+                }
+
+                addr = addr.pointed.ifa_next?.reinterpret<ifaddrs>()
+            }
+        }
+        return null
+    }
 }

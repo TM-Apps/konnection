@@ -41,10 +41,16 @@ fun LoadingState(overlayColor: Color = Color.Transparent) {
 }
 
 @Composable
-fun Home(initialState: NetworkConnection = NetworkConnection.NONE) {
+fun Home(
+    initialConnection: NetworkConnection? = null,
+    initialIpv4: String? = null,
+    initialIpv6: String? = null
+) {
     val context = LocalContext.current
     val konnection = Konnection(context)
-    val state = konnection.observeNetworkConnection().collectAsState(initialState)
+    val networkState = konnection.observeNetworkConnection().collectAsState(initialConnection)
+    val ipv4State = konnection.observeIpv4().collectAsState(initialIpv4)
+    val ipv6State = konnection.observeIpv6().collectAsState(initialIpv6)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -57,7 +63,7 @@ fun Home(initialState: NetworkConnection = NetworkConnection.NONE) {
         ) {
             Image(
                 colorFilter = ColorFilter.tint(Color.White),
-                imageVector = state.value.icon,
+                imageVector = networkState.value.icon,
                 modifier = Modifier.size(120.dp),
                 contentDescription = null
             )
@@ -65,8 +71,24 @@ fun Home(initialState: NetworkConnection = NetworkConnection.NONE) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = stringResource(id = state.value.message),
+                text = stringResource(id = networkState.value.message),
                 style = MaterialTheme.typography.h6,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = ipv4State.value?.let { "IPv4: $it" } ?: "",
+                style = MaterialTheme.typography.subtitle1,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = ipv6State.value?.let { "IPv6: $it" } ?: "",
+                style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center
             )
         }
@@ -85,6 +107,10 @@ private fun LoadingStatePreview() {
 @Composable
 private fun HomePreview() {
     SampleTheme {
-        Home(initialState = NetworkConnection.WIFI)
+        Home(
+            initialConnection = NetworkConnection.WIFI,
+            initialIpv4 = "255.255.255.255",
+            initialIpv6 = "xxxx::xxxx:xx:xxxx:xxxx%xxxx"
+        )
     }
 }

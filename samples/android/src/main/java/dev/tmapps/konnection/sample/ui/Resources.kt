@@ -9,16 +9,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import dev.tmapps.konnection.NetworkConnection
 import dev.tmapps.konnection.sample.R
 
-val NetworkConnection.icon: ImageVector
+val NetworkConnection?.icon: ImageVector
     get() = when (this) {
         NetworkConnection.WIFI -> Icons.Outlined.Wifi
         NetworkConnection.MOBILE -> Icons.Outlined.SignalCellular4Bar
-        NetworkConnection.NONE -> Icons.Filled.CloudOff
+        null -> Icons.Filled.CloudOff
     }
 
-val NetworkConnection.message: Int
+val NetworkConnection?.message: Int
     @StringRes get() = when (this) {
         NetworkConnection.WIFI -> R.string.network_connection_wifi
         NetworkConnection.MOBILE -> R.string.network_connection_mobile
-        NetworkConnection.NONE -> R.string.network_connection_none
+        null -> R.string.network_connection_none
     }

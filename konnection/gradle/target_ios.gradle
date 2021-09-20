@@ -1,36 +1,24 @@
 if (project.ext.isMacOSHost) {
 
-// import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-// import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-// import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
-
 kotlin {
     // add a platform switching to have an IDE support
  // final def buildForDevice = project.findProperty('kotlin.native.cocoapods.target') == 'ios_arm'
  // final def buildForDevice = project.findProperty('device')?.toBoolean() ?: false
 
-    iosX64()
- // iosArm32() {
- //     binaries {
- //         framework()
- //     }
- // }
-    iosArm64()
-
+    ios()
+/*
     sourceSets {
         iosMain {
             dependsOn(commonMain)
             iosX64Main.dependsOn(it)
-         // iosArm32Main.dependsOn(it)
             iosArm64Main.dependsOn(it)
         }
         iosTest {
             iosX64Test.dependsOn(it)
-         // iosArm32Test.dependsOn(it)
             iosArm64Test.dependsOn(it)
         }
     }
-
+*/
     cocoapods {
         // configure fields required by CocoaPods
         summary = 'A Kotlin Multiplatform library to emit Network Connection status.'
