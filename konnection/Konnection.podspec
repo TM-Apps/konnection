@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'konnection'
+    spec.name                     = 'Konnection'
     spec.version                  = '1.1.0'
     spec.homepage                 = 'Link to a Kotlin/Native module homepage'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
@@ -7,13 +7,9 @@ Pod::Spec.new do |spec|
     spec.license                  = ''
     spec.summary                  = 'A Kotlin Multiplatform library to emit Network Connection status.'
 
-    spec.vendored_frameworks      = "build/cocoapods/framework/Konnection.framework"
+    spec.vendored_frameworks      = "build/cocoapods/framework/#{spec.name}.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
-
-                
-
-                
 
     spec.pod_target_xcconfig = {
         'KOTLIN_PROJECT_PATH' => ':konnection',
@@ -22,7 +18,7 @@ Pod::Spec.new do |spec|
 
     spec.script_phases = [
         {
-            :name => 'Build konnection',
+            :name => 'Build Konnection library',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT
