@@ -8,6 +8,11 @@
     <string name="network_connection_mobile">Connected by Mobile Network</string>
     <string name="network_connection_none">No Connection</string>
 
+    <string name="ip_info_ipv4">IPv4: %s</string>
+    <string name="ip_info_ipv6">IPv6: %s</string>
+    <string name="ip_info_host_ipv4">Host IP: %s</string>
+    <string name="ip_info_external_ipv4">External IP: %s</string>
+
     <string name="developer_title">Developer Info</string>
     <string name="developer_name" translatable="false">TM Apps</string>
     <string name="developer_website" translatable="false">https://tmapps.dev/</string>

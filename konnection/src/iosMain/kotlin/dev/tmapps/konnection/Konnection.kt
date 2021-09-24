@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
+import platform.Foundation.NSURL
+import platform.Foundation.NSString
+import platform.Foundation.stringWithContentsOfURL
 import platform.SystemConfiguration.SCNetworkReachabilityCallBack
 import platform.SystemConfiguration.SCNetworkReachabilityContext
 import platform.SystemConfiguration.SCNetworkReachabilityCreateWithAddress
@@ -128,10 +131,8 @@ actual class Konnection {
 
     actual fun isConnected(): Boolean {
         val flags = getReachabilityFlags()
-
         val isReachable = flags.contains(kSCNetworkReachabilityFlagsReachable)
         val needsConnection = flags.contains(kSCNetworkReachabilityFlagsConnectionRequired)
-
         return isReachable && !needsConnection
     }
 
@@ -140,7 +141,6 @@ actual class Konnection {
 
     actual fun getCurrentNetworkConnection(): NetworkConnection? {
         val flags = getReachabilityFlags()
-
         val isReachable = flags.contains(kSCNetworkReachabilityFlagsReachable)
         val needsConnection = flags.contains(kSCNetworkReachabilityFlagsConnectionRequired)
         val isMobileConnection = flags.contains(kSCNetworkReachabilityFlagsIsWWAN)
@@ -155,15 +155,19 @@ actual class Konnection {
     actual fun observeNetworkConnection(): Flow<NetworkConnection?> =
         reachabilityBroadcaster.map { getCurrentNetworkConnection() }
 
-    actual fun getCurrentIpv4(): String? = getIfAddrs(AF_INET)
+    actual suspend fun getCurrentIpInfo(): IpInfo? {
+        val networkConnection = getCurrentNetworkConnection() ?: return null
 
-    actual fun observeIpv4(): Flow<String?> =
-        reachabilityBroadcaster.map { getCurrentIpv4() }
+        val networkInterface = networkConnection.networkInterface
+        val ipv4 = getIfAddrs(networkInterface, AF_INET)
+        val ipv6 = getIfAddrs(networkInterface, AF_INET6)
 
-    actual fun getCurrentIpv6(): String? = getIfAddrs(AF_INET6)
-
-    actual fun observeIpv6(): Flow<String?> =
-        reachabilityBroadcaster.map { getCurrentIpv6() }
+        return when (networkConnection) {
+            NetworkConnection.WIFI -> IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6)
+            NetworkConnection.MOBILE ->
+                IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
+        }
+    }
 
     fun stop() {
         NSNotificationCenter.defaultCenter.removeObserver(notificationObserver)
@@ -196,13 +200,11 @@ actual class Konnection {
             (flags.value and it) > 0u
         }
         .toTypedArray()
-
      // println("SCNetworkReachabilityFlags: ${result.contentDeepToString()}")
-
         return result
     }
 
-    private fun getIfAddrs(saFamily: Int): String? = memScoped {
+    private fun getIfAddrs(netInterface: String, saFamily: Int): String? = memScoped {
         val ifaddr = alloc<ifaddrs>()
         if (getifaddrs(ifaddr.ptr.reinterpret()) == 0) {
             var addr = ifaddr.ifa_next?.reinterpret<ifaddrs>()
@@ -212,14 +214,14 @@ actual class Konnection {
                 val currentSaFamily = socketAddr?.pointed?.sa_family
 
                 if (currentSaFamily?.toInt() == saFamily) {
-                    val socketName = addr.pointed.ifa_name?.reinterpret<ByteVar>()?.toKString() ?: return@memScoped null
+                    val ifaName = addr.pointed.ifa_name?.reinterpret<ByteVar>()?.toKString() ?: return@memScoped null
                  // println("socketName = $socketName")
-                    if (socketName == "en0") {
+                    if (ifaName == netInterface) {
                         val saLen = socketAddr.pointed.sa_len
                         val hostname = allocArray<ByteVar>(length = NI_MAXHOST)
                         getnameinfo(socketAddr, saLen.toUInt(), hostname, NI_MAXHOST, null, 0, NI_NUMERICHOST)
-                  //    println("hostname = ${hostname.pointed.value} | saLen.toUInt() = ${saLen.toUInt()}")
-                  //    println("ipValue = ${hostname.toKString()}")
+                     // println("hostname = ${hostname.pointed.value} | saLen.toUInt() = ${saLen.toUInt()}")
+                     // println("ipValue = ${hostname.toKString()}")
                         return@memScoped hostname.toKString()
                     }
                 }
@@ -229,4 +231,21 @@ actual class Konnection {
         }
         return null
     }
+
+    private val NetworkConnection.networkInterface: String
+        get() = when (this) {
+            NetworkConnection.WIFI -> "en0"
+            NetworkConnection.MOBILE -> "pdp_ip0"
+        }
+
+    private suspend fun getExternalIp(): String? =
+        websitePublicApiUrls.firstNotNullOfOrNull {
+            try {
+                val url = NSURL(string = it)
+                NSString.stringWithContentsOfURL(url)?.toString()
+            } catch (ex: Exception) {
+             // println("getExternalIp = $ex")
+                null
+            }
+        }
 }

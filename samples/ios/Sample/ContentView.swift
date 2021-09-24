@@ -10,8 +10,7 @@ import Konnection
 
 struct ContentView: View {
     @State var connection: NetworkConnection? = nil
-    @State var ipv4: String? = nil
-    @State var ipv6: String? = nil
+    @State var ipInfo: IpInfo? = nil
 
     private let konnection = KonnectionWrapper()
 
@@ -33,13 +32,13 @@ struct ContentView: View {
                     .bold()
                     .padding([.bottom, .horizontal])
 
-                Text(ipv4 ?? "")
+                Text(ipInfo.ipInfo1)
                     .foregroundColor(.white)
                     .font(.title3)
                     .bold()
                     .padding([.bottom, .horizontal])
 
-                Text(ipv6 ?? "")
+                Text(ipInfo.ipInfo2)
                     .foregroundColor(.white)
                     .font(.title3)
                     .bold()
@@ -52,12 +51,10 @@ struct ContentView: View {
     private func onViewAppear() {
         konnection.networkConnectionObservation() { [self] networkConnection in
             self.connection = networkConnection
-        }
-        konnection.ipv4Observation() { [self] ipv4 in
-            self.ipv4 = ipv4
-        }
-        konnection.ipv6Observation() { [self] ipv6 in
-            self.ipv6 = ipv6
+
+            konnection.getCurrentIpInfo() { [self] result, error in
+                self.ipInfo = result
+            }
         }
     }
 }
@@ -78,7 +75,7 @@ extension Optional where Wrapped == NetworkConnection {
     var icon: String {
         get {
             guard let unwrapped = self else {
-                return "NoneConnection"
+                return "No Connection"
             }
             switch unwrapped {
                 case .wifi: return "WifiConnection"
@@ -102,6 +99,43 @@ extension Optional where Wrapped == NetworkConnection {
     }
 }
 
+extension Optional where Wrapped == IpInfo {
+    var ipInfo1: String {
+        get {
+            if let wifiIpInfo = self as? IpInfo.WifiIpInfo {
+                guard let ipv4 = wifiIpInfo.ipv4 else {
+                    return ""
+                }
+                return "IPv4: \(ipv4)"
+            }
+            if let mobileIpInfo = self as? IpInfo.MobileIpInfo {
+                guard let ipv4 = mobileIpInfo.hostIpv4 else {
+                    return ""
+                }
+                return "Host IP: \(ipv4)"
+            }
+            return ""
+        }
+    }
+
+    var ipInfo2: String {
+        get {
+            if let wifiIpInfo = self as? IpInfo.WifiIpInfo {
+                guard let ipv6 = wifiIpInfo.ipv6 else {
+                    return ""
+                }
+                return "IPv6: \(ipv6)"
+            }
+            if let mobileIpInfo = self as? IpInfo.MobileIpInfo {
+                guard let externalIpv4 = mobileIpInfo.externalIpV4 else {
+                    return ""
+                }
+                return "External IP: \(externalIpv4)"
+            }
+            return ""
+        }
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

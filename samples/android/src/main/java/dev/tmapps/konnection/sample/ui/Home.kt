@@ -1,5 +1,6 @@
 package dev.tmapps.konnection.sample.ui
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,8 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import dev.tmapps.konnection.IpInfo
 import dev.tmapps.konnection.Konnection
 import dev.tmapps.konnection.NetworkConnection
+import dev.tmapps.konnection.sample.R
 import dev.tmapps.konnection.sample.ui.theme.SampleTheme
 
 @Composable
@@ -43,14 +47,13 @@ fun LoadingState(overlayColor: Color = Color.Transparent) {
 @Composable
 fun Home(
     initialConnection: NetworkConnection? = null,
-    initialIpv4: String? = null,
-    initialIpv6: String? = null
+    initialIpInfo: IpInfo? = null
 ) {
     val context = LocalContext.current
     val konnection = Konnection(context)
     val networkState = konnection.observeNetworkConnection().collectAsState(initialConnection)
-    val ipv4State = konnection.observeIpv4().collectAsState(initialIpv4)
-    val ipv6State = konnection.observeIpv6().collectAsState(initialIpv6)
+
+    val ipInfo = produceState(initialIpInfo, networkState.value) { value = konnection.getCurrentIpInfo() }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -79,7 +82,7 @@ fun Home(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = ipv4State.value?.let { "IPv4: $it" } ?: "",
+                text = ipInfo.value?.let { context.getIpInfo1(it) } ?: "",
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center
             )
@@ -87,13 +90,25 @@ fun Home(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = ipv6State.value?.let { "IPv6: $it" } ?: "",
+                text = ipInfo.value?.let { context.getIpInfo2(it) } ?: "",
                 style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center
             )
         }
     }
 }
+
+private fun Context.getIpInfo1(ipInfo: IpInfo): String? =
+    when (ipInfo) {
+        is IpInfo.WifiIpInfo -> ipInfo.ipv4?.let { getString(R.string.ip_info_ipv4, it) }
+        is IpInfo.MobileIpInfo -> ipInfo.hostIpv4?.let { getString(R.string.ip_info_host_ipv4, it) }
+    }
+
+private fun Context.getIpInfo2(ipInfo: IpInfo): String? =
+    when (ipInfo) {
+        is IpInfo.WifiIpInfo -> ipInfo.ipv6?.let { getString(R.string.ip_info_ipv6, it) }
+        is IpInfo.MobileIpInfo -> ipInfo.externalIpV4?.let { getString(R.string.ip_info_external_ipv4, it) }
+    }
 
 @Preview(name = "loading state")
 @Composable
@@ -109,8 +124,8 @@ private fun HomePreview() {
     SampleTheme {
         Home(
             initialConnection = NetworkConnection.WIFI,
-            initialIpv4 = "255.255.255.255",
-            initialIpv6 = "xxxx::xxxx:xx:xxxx:xxxx%xxxx"
+            initialIpInfo = IpInfo.WifiIpInfo(ipv4 = "255.255.255.255",
+                                              ipv6 = "xxxx::xxxx:xx:xxxx:xxxx%xxxx")
         )
     }
 }

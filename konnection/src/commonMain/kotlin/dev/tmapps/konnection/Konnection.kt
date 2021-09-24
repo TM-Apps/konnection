@@ -6,6 +6,18 @@ enum class NetworkConnection {
     WIFI, MOBILE
 }
 
+sealed class IpInfo(val networkConnection: NetworkConnection) {
+    data class WifiIpInfo(
+        val ipv4: String?,
+        val ipv6: String?
+    ): IpInfo(networkConnection = NetworkConnection.WIFI)
+
+    data class MobileIpInfo(
+        val hostIpv4: String?,
+        val externalIpV4: String?
+    ): IpInfo(networkConnection = NetworkConnection.MOBILE)
+}
+
 expect class Konnection {
     /** Returns true if has some Network Connection otherwise false. */
     fun isConnected(): Boolean
@@ -17,13 +29,13 @@ expect class Konnection {
     /** Hot Flow that emits the current Network Connection. */
     fun observeNetworkConnection(): Flow<NetworkConnection?>
 
-    /** Returns the IPv4 from the current Network Connection. */
-    fun getCurrentIpv4(): String?
-    /** Hot Flow that emits the IPv4 from the current Network Connection. */
-    fun observeIpv4(): Flow<String?>
-
-    /** Returns the IPv6 from the current Network Connection. */
-    fun getCurrentIpv6(): String?
-    /** Hot Flow that emits the IPv6 from the current Network Connection. */
-    fun observeIpv6(): Flow<String?>
+    /** Returns the ip info from the current Network Connection. */
+    suspend fun getCurrentIpInfo(): IpInfo?
 }
+
+internal val websitePublicApiUrls: List<String>
+    get() = listOf(
+        "https://myexternalip.com/raw",
+        "https://v4v6.ipv6-test.com/api/myip.php"
+        //"http://whatismyip.akamai.com/"
+    )

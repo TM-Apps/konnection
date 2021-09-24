@@ -22,15 +22,5 @@ class KonnectionWrapper {
             .launchIn(mainScope)
     }
 
-    fun ipv4Observation(callback: (String?) -> Unit) {
-        konnection.observeIpv4()
-            .onEach { callback(it) }
-            .launchIn(mainScope)
-    }
-
-    fun ipv6Observation(callback: (String?) -> Unit) {
-        konnection.observeIpv6()
-            .onEach { callback(it) }
-            .launchIn(mainScope)
-    }
+    suspend fun getCurrentIpInfo(): IpInfo? = konnection.getCurrentIpInfo()
 }
