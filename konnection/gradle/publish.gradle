@@ -55,7 +55,7 @@ publishing {
         pom.withXml(withPom)
 
         if (name == "kotlinMultiplatform") {
-            publication.artifact(libSourcesJar) { classifier "sources" }
+         // publication.artifact(libSourcesJar) { classifier "sources" }
             publication.artifact(libJavadocJar) { classifier "javadoc" }
         }
     }
