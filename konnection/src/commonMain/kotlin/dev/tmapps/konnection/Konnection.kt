@@ -37,5 +37,5 @@ internal val websitePublicApiUrls: List<String>
     get() = listOf(
         "https://myexternalip.com/raw",
         "https://v4v6.ipv6-test.com/api/myip.php"
-     // "http://whatismyip.akamai.com/" -> http only -> not working due security concerns.
+     // "http://whatismyip.akamai.com/" -> http only -> disabled due security concerns.
     )

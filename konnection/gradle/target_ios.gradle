@@ -1,33 +1,50 @@
 if (project.ext.isMacOSHost) {
 
+def moduleFrameworkName = project.name.capitalize()
+
 kotlin {
     // add a platform switching to have an IDE support
  // final def buildForDevice = project.findProperty('kotlin.native.cocoapods.target') == 'ios_arm'
  // final def buildForDevice = project.findProperty('device')?.toBoolean() ?: false
 
-    ios()
-/*
-    sourceSets {
-        iosMain {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(it)
-            iosArm64Main.dependsOn(it)
-        }
-        iosTest {
-            iosX64Test.dependsOn(it)
-            iosArm64Test.dependsOn(it)
+    ios {
+        binaries {
+            framework {
+                baseName = moduleFrameworkName
+            }
         }
     }
-*/
+
     cocoapods {
         // configure fields required by CocoaPods
-        summary = 'A Kotlin Multiplatform library to emit Network Connection status.'
+        summary = 'A Kotlin Multiplatform library for Network Connection data.'
         homepage = 'Link to a Kotlin/Native module homepage'
 
-        // the name of the produced framework can be changed.
-        // the name of the Gradle project is used here by default.
-        frameworkName = "Konnection"
+        // set the name for the produced framework, the module name is applied by default
+        frameworkName = moduleFrameworkName
     }
+}
+
+// apply podspec file adjustments...
+tasks.getByName('podspec').doLast {
+    def podspecFile = file("${projectDir}/${moduleFrameworkName}.podspec")
+    def newPodspecContent = []
+    podspecFile.eachLine { line ->
+        def trimLine = line.trim()
+
+        if (trimLine.startsWith('spec.name')) {
+            line = line.replaceFirst(/\=.*/, "= '${moduleFrameworkName}'")
+        }
+        if (trimLine.startsWith('spec.vendored_frameworks')) {
+            line = line.replaceFirst(/\=.*/, "= \"build/cocoapods/framework/#{spec.name}.framework\"")
+        }
+        if (trimLine.startsWith(':name')) {
+            line = line.replaceFirst(/\=.*/, "=> 'Build ${moduleFrameworkName} library',")
+        }
+
+        newPodspecContent << line
+    }
+    podspecFile.text = newPodspecContent.join("\n")
 }
 
 }
