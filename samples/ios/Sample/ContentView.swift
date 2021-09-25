@@ -75,7 +75,7 @@ extension Optional where Wrapped == NetworkConnection {
     var icon: String {
         get {
             guard let unwrapped = self else {
-                return "No Connection"
+                return "NoConnection"
             }
             switch unwrapped {
                 case .wifi: return "WifiConnection"
