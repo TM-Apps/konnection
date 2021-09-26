@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation "dev.tmapps:konnection:1.0.0"
+    implementation "dev.tmapps:konnection:1.1.0"
 }
 ```
 
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.0.0")
+    implementation("dev.tmapps:konnection:1.1.0")
 }
 ```
 
@@ -34,7 +34,7 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // Works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.0.0")
+        implementation("dev.tmapps:konnection:1.1.0")
     }
 }
 ```
@@ -48,6 +48,12 @@ val konnection = Konnection(context)
 
 // get the immediate connection state
 val hasNetworkConnection = konnection.isConnected()
+// or observe it...
+konnection.observeHasConnection()
+    .collect { hasConnection -> ... }
+
+// return ip info for Wifi (ipv4 and ipv6) and Mobile (host and external) connections
+val currentIpInfo = konnection.getCurrentIpInfo()
 
 // observes current NetworkConnection (WIFI, MOBILE, NONE) state.
 konnection.observeConnection()
@@ -62,6 +68,15 @@ val konnection = Konnection()
 
 // get the immediate connection state
 val hasNetworkConnection = konnection.isConnected()
+// or observe it...
+fun hasConnectionObservation(callback: (Boolean) -> Unit) {
+    konnection.observeHasConnection()
+        .onEach { callback(it) }
+        .launchIn(...)
+}
+
+// return ip info for Wifi (ipv4 and ipv6) and Mobile (host and external) connections
+val currentIpInfo = konnection.getCurrentIpInfo()
 
 // emits current NetworkConnection (WIFI, MOBILE, NONE) state
 fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
@@ -72,7 +87,7 @@ fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
 
 // stops the publishing of connection state.
 // this is necessary to stop and clear the internal SCNetworkReachability references
-// and free the created pointers on native heap memory  
+// and free the created pointers on native heap memory
 konnection.stop()
 ```
 
