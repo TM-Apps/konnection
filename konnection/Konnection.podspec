@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'Konnection'
-    spec.version                  = '1.1.0'
+    spec.version                  = '1.1.1'
     spec.homepage                 = 'Link to a Kotlin/Native module homepage'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''
@@ -10,10 +10,6 @@ Pod::Spec.new do |spec|
     spec.vendored_frameworks      = "build/cocoapods/framework/#{spec.name}.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
-
-                
-
-                
 
     spec.pod_target_xcconfig = {
         'KOTLIN_PROJECT_PATH' => ':konnection',

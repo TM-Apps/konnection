@@ -84,7 +84,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.core:core-ktx:1.7.0-rc01'
+    implementation 'androidx.core:core-ktx:1.7.0'
 
     // Jetpack Compose libraries
     implementation "androidx.compose.ui:ui:$compose_version"
@@ -97,11 +97,12 @@ dependencies {
     // Material design icons
     implementation "androidx.compose.material:material-icons-core:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    // Compose APIs for Activity
+    implementation 'androidx.activity:activity-compose:1.4.0'
     // Integration with observables
     implementation "androidx.compose.runtime:runtime:$compose_version"
  // implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
  // androidTestImplementation "androidx.compose.ui:ui-test:$compose_version" // UI tests
-    implementation 'androidx.activity:activity-compose:1.3.1' // Composable APIs for Activity
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
