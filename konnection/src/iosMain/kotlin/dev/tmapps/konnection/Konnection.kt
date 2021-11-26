@@ -22,6 +22,7 @@ import kotlinx.cinterop.value
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import platform.Foundation.NSLog
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
@@ -61,7 +62,7 @@ import platform.posix.getnameinfo
 import platform.posix.sockaddr
 import platform.posix.sockaddr_in
 
-actual class Konnection {
+actual class Konnection(private val enableDebugLog: Boolean = false) {
 
     private val zeroAddress: NativePointed
     private val reachabilityRef: SCNetworkReachabilityRef
@@ -109,15 +110,15 @@ actual class Konnection {
             // this block runs on "network_helper" thread, created few lines above
             if (info == null) { return@staticCFunction }
 
-            // println("SCNetworkReachabilityCallBack fired!")
+            // debugLog("SCNetworkReachabilityCallBack fired!")
             // reachabilityBroadcaster.value = TriggerEvent -> not working: EXC_BAD_ACCESS!
 
             try {
                 NSNotificationCenter.defaultCenter.postNotificationName("ReachabilityChangedNotification", null)
-            } catch (e: Throwable) {
+            } catch (error: Throwable) {
                 // can't send Reachability update, probably the instance of Konnection is dead!
                 // or some unexpected error occurs ¯\_(ツ)_/¯
-                println("SCNetworkReachabilityCallBack error!")
+                // debugLog("SCNetworkReachabilityCallBack error!", error)
             }
         }
 
@@ -164,8 +165,7 @@ actual class Konnection {
 
         return when (networkConnection) {
             NetworkConnection.WIFI -> IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6)
-            NetworkConnection.MOBILE ->
-                IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
+            NetworkConnection.MOBILE -> IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
         }
     }
 
@@ -200,7 +200,7 @@ actual class Konnection {
             (flags.value and it) > 0u
         }
         .toTypedArray()
-     // println("SCNetworkReachabilityFlags: ${result.contentDeepToString()}")
+        debugLog("SCNetworkReachabilityFlags: ${result.contentDeepToString()}")
         return result
     }
 
@@ -215,13 +215,11 @@ actual class Konnection {
 
                 if (currentSaFamily?.toInt() == saFamily) {
                     val ifaName = addr.pointed.ifa_name?.reinterpret<ByteVar>()?.toKString() ?: return@memScoped null
-                 // println("socketName = $socketName")
                     if (ifaName == netInterface) {
                         val saLen = socketAddr.pointed.sa_len
                         val hostname = allocArray<ByteVar>(length = NI_MAXHOST)
                         getnameinfo(socketAddr, saLen.toUInt(), hostname, NI_MAXHOST, null, 0, NI_NUMERICHOST)
-                     // println("hostname = ${hostname.pointed.value} | saLen.toUInt() = ${saLen.toUInt()}")
-                     // println("ipValue = ${hostname.toKString()}")
+                        debugLog("hostname = ${hostname.pointed.value} | ipValue = ${hostname.toKString()}")
                         return@memScoped hostname.toKString()
                     }
                 }
@@ -243,9 +241,16 @@ actual class Konnection {
             try {
                 val url = NSURL(string = it)
                 NSString.stringWithContentsOfURL(url)?.toString()
-            } catch (ex: Exception) {
-             // println("getExternalIp = $ex")
+            } catch (error: Exception) {
+                debugLog("getExternalIp error!", error)
                 null
             }
         }
+
+    private fun debugLog(message: String, error: Throwable? = null) {
+        if (enableDebugLog) {
+            val logMessage = message + if (error != null) "error=($error)" else ""
+            NSLog("Konnection -> $logMessage")
+        }
+    }
 }

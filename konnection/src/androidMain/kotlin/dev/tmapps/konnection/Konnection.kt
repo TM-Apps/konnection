@@ -7,6 +7,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,19 +18,29 @@ import java.net.Inet6Address
 import java.net.NetworkInterface
 import java.net.URL
 
-actual class Konnection(context: Context) {
+actual class Konnection(context: Context, private val enableDebugLog: Boolean = false) {
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    private val connectionPublisher = MutableStateFlow<NetworkConnection?>(value = null)
+    private val connectionPublisher = MutableStateFlow(getCurrentNetworkConnection())
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            publishNetworkState(network)
+            debugLog("NetworkCallback -> onAvailable: network=($network)")
+            // need this only for Android API < 23
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                connectionPublisher.value = getNetworkConnection(network)
+            }
+        }
+        override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+            val connection = getNetworkConnection(networkCapabilities)
+            debugLog("NetworkCallback -> onCapabilitiesChanged: connection=($connection)")
+            connectionPublisher.value = connection
         }
         override fun onLost(network: Network) {
-            publishNetworkState(network)
+            debugLog("NetworkCallback -> onLost: network=($network)")
+            connectionPublisher.value = null
         }
     }
 
@@ -38,8 +49,7 @@ actual class Konnection(context: Context) {
             connectivityManager.registerDefaultNetworkCallback(networkCallback)
         } else {
             val networkRequest = NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
                 .build()
             connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
         }
@@ -65,6 +75,19 @@ actual class Konnection(context: Context) {
 
     actual suspend fun getCurrentIpInfo(): IpInfo? = getIpInfo(getCurrentNetworkConnection())
 
+    private fun getNetworkConnection(network: Network): NetworkConnection? {
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return getNetworkConnection(capabilities)
+    }
+
+    private fun getNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            postAndroidMGetNetworkConnection(capabilities)
+        } else {
+            preAndroidMGetNetworkConnection(capabilities)
+        }
+
+    // region post Android M
     @TargetApi(Build.VERSION_CODES.M)
     private fun postAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean =
         postAndroidMNetworkConnection(connectivityManager) != null
@@ -72,14 +95,22 @@ actual class Konnection(context: Context) {
     @TargetApi(Build.VERSION_CODES.M)
     private fun postAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection? {
         val network = connectivityManager.activeNetwork
-        val connection = connectivityManager.getNetworkCapabilities(network)
-        return when {
-            connection == null -> null
-            connection.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
-            else -> NetworkConnection.MOBILE
-        }
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return getNetworkConnection(capabilities)
     }
 
+    private fun postAndroidMGetNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
+        when {
+            capabilities == null -> null
+            !(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) -> null
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkConnection.MOBILE
+            else -> null
+        }
+    // endregion
+
+    // region pre Android M
     private fun preAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean =
         preAndroidMNetworkConnection(connectivityManager) != null
 
@@ -91,14 +122,15 @@ actual class Konnection(context: Context) {
             else -> NetworkConnection.MOBILE
         }
 
-    private fun publishNetworkState(network: Network) {
-        val connection = connectivityManager.getNetworkCapabilities(network)
-        connectionPublisher.value = when {
-            connection == null || !isConnected() -> null
-            connection.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
-            else -> NetworkConnection.MOBILE
+    private fun preAndroidMGetNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
+        when {
+            capabilities == null -> null
+            !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> null
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkConnection.MOBILE
+            else -> null
         }
-    }
+    // endregion
 
     private suspend fun getIpInfo(networkConnection: NetworkConnection?): IpInfo? {
         if (networkConnection == null) return null
@@ -106,6 +138,7 @@ actual class Konnection(context: Context) {
             var ipv4: String? = null
             var ipv6: String? = null
 
+            @Suppress("BlockingMethodInNonBlockingContext")
             val networks = NetworkInterface.getNetworkInterfaces()
 
             while (networks.hasMoreElements()) {
@@ -113,7 +146,7 @@ actual class Konnection(context: Context) {
 
                 while (enumIpAddr.hasMoreElements()) {
                     val inetAddress = enumIpAddr.nextElement()
-                 // Log.d("Konnection", "getIpAddress inetAddress = $inetAddress")
+                    debugLog("getIpAddress inetAddress = $inetAddress")
                     if (!inetAddress.isLoopbackAddress) {
                         if (ipv4 == null && inetAddress is Inet4Address) ipv4 = inetAddress.hostAddress?.toString()
                         if (ipv6 == null && inetAddress is Inet6Address) ipv6 = inetAddress.hostAddress?.toString()
@@ -123,11 +156,10 @@ actual class Konnection(context: Context) {
 
             return when (networkConnection) {
                 NetworkConnection.WIFI -> IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6)
-                NetworkConnection.MOBILE ->
-                    IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
+                NetworkConnection.MOBILE -> IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
             }
         } catch (ex: Exception) {
-         // Log.e("Konnection", "getIpInfo networkConnection = $networkConnection", ex)
+            debugLog("getIpInfo networkConnection = $networkConnection", ex)
             return null
         }
     }
@@ -136,10 +168,16 @@ actual class Konnection(context: Context) {
         websitePublicApiUrls.firstNotNullOfOrNull {
             try {
                 URL(it).readText()
-            } catch (ex: Exception) {
-             // Log.e("Konnection", "getExternalIp", ex)
+            } catch (error: Exception) {
+                debugLog("getExternalIp error!", error)
                 null
             }
+        }
+    }
+
+    private fun debugLog(message: String, error: Throwable? = null) {
+        if (enableDebugLog) {
+            Log.d("Konnection", message, error)
         }
     }
 }

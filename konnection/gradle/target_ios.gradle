@@ -29,20 +29,23 @@ kotlin {
 tasks.getByName('podspec').doLast {
     def podspecFile = file("${projectDir}/${moduleFrameworkName}.podspec")
     def newPodspecContent = []
+    def trimLineBefore = null
     podspecFile.eachLine { line ->
         def trimLine = line.trim()
 
         if (trimLine.startsWith('spec.name')) {
-            line = line.replaceFirst(/\=.*/, "= '${moduleFrameworkName}'")
+            line = line.replaceFirst(/=.*/, "= '${moduleFrameworkName}'")
         }
         if (trimLine.startsWith('spec.vendored_frameworks')) {
-            line = line.replaceFirst(/\=.*/, "= \"build/cocoapods/framework/#{spec.name}.framework\"")
+            line = line.replaceFirst(/=.*/, "= \"build/cocoapods/framework/#{spec.name}.framework\"")
         }
         if (trimLine.startsWith(':name')) {
-            line = line.replaceFirst(/\=.*/, "=> 'Build ${moduleFrameworkName} library',")
+            line = line.replaceFirst(/=.*/, "=> 'Build ${moduleFrameworkName} library',")
         }
-
-        newPodspecContent << line
+        if (trimLine != trimLineBefore) {
+            newPodspecContent << line
+        }
+        trimLineBefore = trimLine
     }
     podspecFile.text = newPodspecContent.join("\n")
 }

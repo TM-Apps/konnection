@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.tmapps.konnection.IpInfo
 import dev.tmapps.konnection.Konnection
 import dev.tmapps.konnection.NetworkConnection
+import dev.tmapps.konnection.sample.BuildConfig
 import dev.tmapps.konnection.sample.R
 import dev.tmapps.konnection.sample.ui.theme.SampleTheme
 
@@ -50,7 +51,7 @@ fun Home(
     initialIpInfo: IpInfo? = null
 ) {
     val context = LocalContext.current
-    val konnection = Konnection(context)
+    val konnection = Konnection(context, enableDebugLog = BuildConfig.DEBUG)
     val networkState = konnection.observeNetworkConnection().collectAsState(initialConnection)
 
     val ipInfo = produceState(initialIpInfo, networkState.value) { value = konnection.getCurrentIpInfo() }

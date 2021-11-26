@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'Konnection'
-    spec.version                  = '1.1.1'
+    spec.version                  = '1.1.2'
     spec.homepage                 = 'Link to a Kotlin/Native module homepage'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''

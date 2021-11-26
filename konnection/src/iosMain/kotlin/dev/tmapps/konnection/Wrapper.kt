@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.onEach
 
 class KonnectionWrapper {
     private val mainScope = MainScope()
-    private val konnection = Konnection()
+    private val konnection = Konnection(enableDebugLog = true)
 
     fun hasNetworkConnection(): Boolean = konnection.isConnected()
 

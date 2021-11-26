@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'dev.tmapps'
-version = '1.1.1'
+version = '1.1.2'
 
 apply from: rootProject.file("gradle/targets.gradle")
 apply from: project.file("gradle/target_android.gradle")

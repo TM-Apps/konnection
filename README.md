@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation "dev.tmapps:konnection:1.1.0"
+    implementation "dev.tmapps:konnection:1.1.2"
 }
 ```
 
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.1.0")
+    implementation("dev.tmapps:konnection:1.1.2")
 }
 ```
 
@@ -34,7 +34,7 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // Works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.1.0")
+        implementation("dev.tmapps:konnection:1.1.2")
     }
 }
 ```
@@ -44,7 +44,8 @@ commonMain {
 ### on Android
 ```kotlin
 // instantiate the Konnection class with a android.content.Context
-val konnection = Konnection(context)
+// you can enable or disable internal library debug logging, default is false...
+val konnection = Konnection(context, enableDebugLog = true)
 
 // get the immediate connection state
 val hasNetworkConnection = konnection.isConnected()
@@ -64,7 +65,8 @@ konnection.observeConnection()
 
 ```kotlin
 // instantiate the Konnection class
-val konnection = Konnection()
+// you can enable or disable internal library debug logging, default is false...
+val konnection = Konnection(enableDebugLog = true)
 
 // get the immediate connection state
 val hasNetworkConnection = konnection.isConnected()
