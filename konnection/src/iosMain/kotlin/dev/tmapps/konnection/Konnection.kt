@@ -25,8 +25,8 @@ import kotlinx.coroutines.flow.map
 import platform.Foundation.NSLog
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
-import platform.Foundation.NSURL
 import platform.Foundation.NSString
+import platform.Foundation.NSURL
 import platform.Foundation.stringWithContentsOfURL
 import platform.SystemConfiguration.SCNetworkReachabilityCallBack
 import platform.SystemConfiguration.SCNetworkReachabilityContext
