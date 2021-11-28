@@ -80,13 +80,6 @@ actual class Konnection(context: Context, private val enableDebugLog: Boolean = 
         return getNetworkConnection(capabilities)
     }
 
-    private fun getNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            postAndroidMGetNetworkConnection(capabilities)
-        } else {
-            preAndroidMGetNetworkConnection(capabilities)
-        }
-
     // region post Android M
     @TargetApi(Build.VERSION_CODES.M)
     private fun postAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean =
@@ -98,16 +91,6 @@ actual class Konnection(context: Context, private val enableDebugLog: Boolean = 
         val capabilities = connectivityManager.getNetworkCapabilities(network)
         return getNetworkConnection(capabilities)
     }
-
-    private fun postAndroidMGetNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
-        when {
-            capabilities == null -> null
-            !(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) -> null
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkConnection.MOBILE
-            else -> null
-        }
     // endregion
 
     // region pre Android M
@@ -121,16 +104,20 @@ actual class Konnection(context: Context, private val enableDebugLog: Boolean = 
             ConnectivityManager.TYPE_WIFI -> NetworkConnection.WIFI
             else -> NetworkConnection.MOBILE
         }
+    // endregion
 
-    private fun preAndroidMGetNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
+    private fun getNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
         when {
             capabilities == null -> null
-            !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> null
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                && !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> null
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                !(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) -> null
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkConnection.MOBILE
             else -> null
         }
-    // endregion
 
     private suspend fun getIpInfo(networkConnection: NetworkConnection?): IpInfo? {
         if (networkConnection == null) return null
