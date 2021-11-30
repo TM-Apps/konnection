@@ -21,7 +21,7 @@ allprojects {
     project.ext.hostManager = new org.jetbrains.kotlin.konan.target.HostManager()
 
     repositories {
-        maven { url "https://kotlin.bintray.com/kotlinx" }
+        mavenCentral()
     }
 }
 
