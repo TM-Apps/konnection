@@ -2,11 +2,11 @@ plugins {
     id 'org.jetbrains.kotlin.multiplatform'
     id 'org.jetbrains.kotlin.native.cocoapods'
     id 'com.android.library'
-    id 'io.gitlab.arturbosch.detekt' version "1.15.0"
+    id 'io.gitlab.arturbosch.detekt' version "1.19.0"
 }
 
 group = 'dev.tmapps'
-version = '1.1.2'
+version = '1.1.3'
 
 apply from: rootProject.file("gradle/targets.gradle")
 apply from: project.file("gradle/target_android.gradle")
@@ -40,7 +40,7 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
-                implementation 'app.cash.turbine:turbine:0.6.0'
+                implementation 'app.cash.turbine:turbine:0.7.0'
              // implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
             }
         }

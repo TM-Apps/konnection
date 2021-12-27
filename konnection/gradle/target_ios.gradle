@@ -50,4 +50,15 @@ tasks.getByName('podspec').doLast {
     podspecFile.text = newPodspecContent.join("\n")
 }
 
+// https://youtrack.jetbrains.com/issue/KT-46257
+// MPP: Stdlib included more than once for an enabled hierarchical commonization
+afterEvaluate {
+    def compilation = kotlin.targets["metadata"].compilations["iosMain"]
+    compilation.compileKotlinTask.doFirst {
+        compilation.compileDependencyFiles = files(
+            compilation.compileDependencyFiles.findAll { !it.absolutePath.endsWith("klib/common/stdlib") }
+        )
+    }
+}
+
 }
