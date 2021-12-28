@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation "dev.tmapps:konnection:1.1.2"
+    implementation "dev.tmapps:konnection:1.1.3"
 }
 ```
 
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.1.2")
+    implementation("dev.tmapps:konnection:1.1.3")
 }
 ```
 
@@ -33,8 +33,8 @@ In common code that should get compiled for different platforms, you can add dep
 ```groovy
 commonMain {
     dependencies {
-        // Works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.1.2")
+        // works as common dependency as well as the platform one
+        implementation("dev.tmapps:konnection:1.1.3")
     }
 }
 ```
