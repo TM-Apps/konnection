@@ -1,5 +1,5 @@
 PODS:
-  - Konnection (1.1.2)
+  - Konnection (1.1.5)
 
 DEPENDENCIES:
   - Konnection (from `../../konnection`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../../konnection"
 
 SPEC CHECKSUMS:
-  Konnection: 43658432b0576bc98ac76240f4d5b69439b32e40
+  Konnection: a80f45fb61bf17bd3076b31c6c0916bb3a66e7ca
 
 PODFILE CHECKSUM: 0d5f686a8ef027221e0d6d52311cfd73eb037dc1
 

@@ -1,21 +1,20 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'Konnection'
-    spec.version                  = '1.1.4'
+    spec.version                  = '1.1.5'
     spec.homepage                 = 'Link to a Kotlin/Native module homepage'
-    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
+    spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
     spec.summary                  = 'A Kotlin Multiplatform library for Network Connection data.'
-
     spec.vendored_frameworks      = "build/cocoapods/framework/#{spec.name}.framework"
-    spec.libraries                = "c++"
-    spec.module_name              = "#{spec.name}_umbrella"
-
+    spec.libraries                = 'c++'
+    spec.ios.deployment_target = '12.4'
+                
     spec.pod_target_xcconfig = {
         'KOTLIN_PROJECT_PATH' => ':konnection',
-        'PRODUCT_MODULE_NAME' => 'konnection',
+        'PRODUCT_MODULE_NAME' => 'Konnection',
     }
-
+                
     spec.script_phases = [
         {
             :name => 'Build Konnection library',
@@ -31,8 +30,9 @@ Pod::Spec.new do |spec|
                 "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \
                     -Pkotlin.native.cocoapods.archs="$ARCHS" \
-                    -Pkotlin.native.cocoapods.configuration=$CONFIGURATION
+                    -Pkotlin.native.cocoapods.configuration="$CONFIGURATION"
             SCRIPT
         }
     ]
+                
 end

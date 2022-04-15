@@ -12,9 +12,9 @@
 		1D3B3EB92326D1B000CFB0ED /* SampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3B3EB82326D1B000CFB0ED /* SampleTests.swift */; };
 		1D3B3EC42326D1B000CFB0ED /* SampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3B3EC32326D1B000CFB0ED /* SampleUITests.swift */; };
 		24D1F6D795B802A839522C6D /* Pods_SampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D6C92284D4B728536FCB02 /* Pods_SampleTests.framework */; };
+		670F4A792802EFD200D6FE59 /* Pods_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7BB248FE45B2E77993088D /* Pods_Sample.framework */; };
 		6783B32F259CA3FF00D3E1E9 /* SampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6783B32E259CA3FF00D3E1E9 /* SampleApp.swift */; };
 		6783B340259CA48B00D3E1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6783B33F259CA48B00D3E1E9 /* ContentView.swift */; };
-		67B926BA277A355C00254DBA /* Pods_Sample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7BB248FE45B2E77993088D /* Pods_Sample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				67B926BA277A355C00254DBA /* Pods_Sample.framework in Frameworks */,
+				670F4A792802EFD200D6FE59 /* Pods_Sample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,7 +180,7 @@
 				1D3B3E9A2326D1AE00CFB0ED /* Sources */,
 				1D3B3E9B2326D1AE00CFB0ED /* Frameworks */,
 				1D3B3E9C2326D1AE00CFB0ED /* Resources */,
-				C1A1D599DE0D849B9CAE5C15 /* [CP] Embed Pods Frameworks */,
+				B52A88EA1FAEDAD4297841DC /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -342,7 +342,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C1A1D599DE0D849B9CAE5C15 /* [CP] Embed Pods Frameworks */ = {
+		B52A88EA1FAEDAD4297841DC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -560,6 +560,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_CODE_SIGN_FLAGS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-l\"c++\"",
+					"-framework",
+					"\"Konnection\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tmapps.konnection.sample;
 				PRODUCT_NAME = Sample;
 				SWIFT_VERSION = 5.0;
@@ -581,6 +588,13 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_CODE_SIGN_FLAGS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-l\"c++\"",
+					"-framework",
+					"\"Konnection\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tmapps.konnection.sample;
 				PRODUCT_NAME = Sample;
