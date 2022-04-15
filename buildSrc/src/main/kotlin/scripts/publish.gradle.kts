@@ -20,15 +20,15 @@ val libJavadocJar by tasks.registering(Jar::class) {
 
 publishing {
     publications {
-        withType<MavenPublication>().forEach { publication ->
-            with(publication.pom) {
+        withType<MavenPublication>().all {
+            pom {
                 withXml {
-                    val root = asNode()
-                    root.appendNode("name", project.name)
-                    root.appendNode("description", "A Kotlin Multiplatform Mobile library to emit Network Connection status.")
-                    root.appendNode("url", "https://github.com/TM-Apps/konnection")
+                    asNode().apply {
+                        appendNode("name", project.name)
+                        appendNode("description", "A Kotlin Multiplatform Mobile library to emit Network Connection status.")
+                        appendNode("url", "https://github.com/TM-Apps/konnection")
+                    }
                 }
-
                 licenses {
                     license {
                         name.set("The Apache Software License, Version 2.0")
@@ -50,8 +50,8 @@ publishing {
             }
 
             if (name == "kotlinMultiplatform") {
-                // publication.artifact(libSourcesJar.get()) { archiveClassifier.set("sources") }
-                publication.artifact(libJavadocJar.get()) //{ archiveClassifier.set("javadoc") }
+                // artifact(libSourcesJar.get()) { archiveClassifier.set("sources") }
+                artifact(libJavadocJar.get()) //{ archiveClassifier.set("javadoc") }
             }
         }
     }
