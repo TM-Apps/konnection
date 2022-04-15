@@ -30,6 +30,7 @@ jobs:
     - name: setup JDK
       uses: actions/setup-java@v3
       with:
+        distribution: 'adopt'
         java-version: 17
 
     #- name: Select Xcode
