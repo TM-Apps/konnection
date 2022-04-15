@@ -3,7 +3,7 @@ plugins {
     id(BuildPlugins.detekt).version(BuildPlugins.Versions.detektVersion)
 }
 group = "dev.tmapps"
-version = projectVersion
+version = "1.1.5"
 
 repositories {
     google()

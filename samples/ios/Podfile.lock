@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../../konnection"
 
 SPEC CHECKSUMS:
-  Konnection: a80f45fb61bf17bd3076b31c6c0916bb3a66e7ca
+  Konnection: 00e6077acf6d9999fa94487a01d86110ce641c83
 
 PODFILE CHECKSUM: 0d5f686a8ef027221e0d6d52311cfd73eb037dc1
 

@@ -2,7 +2,8 @@ package scripts
 
 import isMacOsMachine
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask
-import projectVersion
+import summary
+import url
 
 plugins {
     kotlin("multiplatform") apply false
@@ -28,9 +29,9 @@ kotlin {
 
     cocoapods {
         // configure fields required by CocoaPods
-        version = projectVersion
-        summary = "A Kotlin Multiplatform library for Network Connection data."
-        homepage = "Link to a Kotlin/Native module homepage"
+        version = project.version.toString()
+        summary = project.summary
+        homepage = project.url
 
         // set the name for the produced framework, the module name is applied by default
         name = moduleFrameworkName

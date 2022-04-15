@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'Konnection'
     spec.version                  = '1.1.5'
-    spec.homepage                 = 'Link to a Kotlin/Native module homepage'
+    spec.homepage                 = 'https://github.com/TM-Apps/konnection'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''

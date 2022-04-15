@@ -1,5 +1,15 @@
 package scripts
 
+import developerId
+import developerName
+import license
+import licenseUrl
+import organization
+import organizationUrl
+import scm
+import summary
+import url
+
 plugins {
     id("maven-publish")
     id("signing")
@@ -25,27 +35,27 @@ publishing {
                 withXml {
                     asNode().apply {
                         appendNode("name", project.name)
-                        appendNode("description", "A Kotlin Multiplatform Mobile library to emit Network Connection status.")
-                        appendNode("url", "https://github.com/TM-Apps/konnection")
+                        appendNode("description", project.summary)
+                        appendNode("url", project.url)
                     }
                 }
                 licenses {
                     license {
-                        name.set("The Apache Software License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        name.set(project.license)
+                        url.set(project.licenseUrl)
                         distribution.set("repo")
                     }
                 }
                 developers {
                     developer {
-                        id.set("magnumrocha")
-                        name.set("Magnum Rocha")
-                        organization.set("TMApps")
-                        organizationUrl.set("http://github.com/TM-Apps")
+                        id.set(project.developerId)
+                        name.set(project.developerName)
+                        organization.set(project.organization)
+                        organizationUrl.set(project.organizationUrl)
                     }
                 }
                 scm {
-                    url.set("https://github.com/TM-Apps/konnection")
+                    url.set(project.scm)
                 }
             }
 
