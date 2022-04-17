@@ -15,7 +15,7 @@ val hostManager by lazy { HostManager() }
 
 
 /**
- * Util to check if the project run on Linux or Mac operating system
+ * Check if the project run on Linux operating system
  *
  * @return true if the operating system is one of them
  */
@@ -25,7 +25,7 @@ fun isLinuxMachine(): Boolean {
 }
 
 /**
- * Util to check if the project run on Linux or Mac operating system
+ * Check if the project run on Mac operating system
  *
  * @return true if the operating system is one of them
  */
@@ -35,7 +35,7 @@ fun isMacOsMachine(): Boolean {
 }
 
 /**
- * Util to check if the project run on Linux or Mac operating system
+ * Check if the project run on Linux or Mac operating system
  *
  * @return true if the operating system is one of them
  */

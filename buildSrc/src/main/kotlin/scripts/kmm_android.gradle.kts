@@ -20,7 +20,12 @@ android {
         }
     }
 
-    testOptions.unitTests.isIncludeAndroidResources = true
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
 
     compileOptions {
         sourceCompatibility(JavaVersion.VERSION_1_8)
@@ -39,13 +44,17 @@ kotlin {
             kotlin.srcDir("src/androidMain/kotlin")
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
+                implementation(Dependencies.androidXAnnotation)
             }
         }
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
-             // implementation("junit:junit:4.13.2")
+                implementation(Dependencies.mockk)
+                implementation(Dependencies.mockkAgentJvm)
+                implementation(Dependencies.robolectric)
+                implementation(Dependencies.turbine)
             }
         }
     }

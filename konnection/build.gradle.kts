@@ -1,9 +1,11 @@
 plugins {
     kotlin("multiplatform")
-    id(BuildPlugins.detekt).version(BuildPlugins.Versions.detektVersion)
+    id(BuildPlugins.googleKsp).version(kspVersion)
+    id(BuildPlugins.detekt).version(detektVersion)
 }
+
 group = "dev.tmapps"
-version = "1.1.5"
+version = "1.1.6"
 
 repositories {
     google()
@@ -34,8 +36,9 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation(Dependencies.kotlinCoroutinesTest)
+                implementation(Dependencies.mockative)
                 implementation(Dependencies.turbine)
-                // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
             }
         }
     }
@@ -47,7 +50,10 @@ kotlin {
         }
 }
 
-// Internal Script plugins
+dependencies {
+    ksp(Dependencies.mockativeProcessor)
+}
+
 apply(plugin = ScriptPlugins.kmmAndroid)
 apply(plugin = ScriptPlugins.kmmIoS)
 apply(plugin = ScriptPlugins.publish)

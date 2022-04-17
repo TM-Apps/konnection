@@ -1,5 +1,7 @@
 package dev.tmapps.konnection
 
+import dev.tmapps.konnection.resolvers.IPv6TestIpResolver
+import dev.tmapps.konnection.resolvers.MyExternalIpResolver
 import dev.tmapps.konnection.utils.TriggerEvent
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.COpaquePointer
@@ -25,9 +27,6 @@ import kotlinx.coroutines.flow.map
 import platform.Foundation.NSLog
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
-import platform.Foundation.NSString
-import platform.Foundation.NSURL
-import platform.Foundation.stringWithContentsOfURL
 import platform.SystemConfiguration.SCNetworkReachabilityCallBack
 import platform.SystemConfiguration.SCNetworkReachabilityContext
 import platform.SystemConfiguration.SCNetworkReachabilityCreateWithAddress
@@ -62,7 +61,13 @@ import platform.posix.getnameinfo
 import platform.posix.sockaddr
 import platform.posix.sockaddr_in
 
-actual class Konnection(private val enableDebugLog: Boolean = false) {
+actual class Konnection(
+    private val enableDebugLog: Boolean = false,
+    private val externalIpResolvers: List<ExternalIpResolver> = listOf(
+        MyExternalIpResolver(enableDebugLog),
+        IPv6TestIpResolver(enableDebugLog)
+    )
+) {
 
     private val zeroAddress: NativePointed
     private val reachabilityRef: SCNetworkReachabilityRef
@@ -237,15 +242,7 @@ actual class Konnection(private val enableDebugLog: Boolean = false) {
         }
 
     private suspend fun getExternalIp(): String? =
-        websitePublicApiUrls.firstNotNullOfOrNull {
-            try {
-                val url = NSURL(string = it)
-                NSString.stringWithContentsOfURL(url)?.toString()
-            } catch (error: Exception) {
-                debugLog("getExternalIp error!", error)
-                null
-            }
-        }
+        externalIpResolvers.firstNotNullOfOrNull { it.get() }
 
     private fun debugLog(message: String, error: Throwable? = null) {
         if (enableDebugLog) {

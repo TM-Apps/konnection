@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'Konnection'
-    spec.version                  = '1.1.5'
+    spec.version                  = '1.1.6'
     spec.homepage                 = 'https://github.com/TM-Apps/konnection'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
