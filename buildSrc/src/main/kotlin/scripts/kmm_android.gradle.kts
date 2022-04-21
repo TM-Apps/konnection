@@ -54,7 +54,6 @@ kotlin {
                 implementation(Dependencies.mockk)
                 implementation(Dependencies.mockkAgentJvm)
                 implementation(Dependencies.robolectric)
-                implementation(Dependencies.turbine)
             }
         }
     }

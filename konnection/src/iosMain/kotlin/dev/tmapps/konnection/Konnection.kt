@@ -68,7 +68,6 @@ actual class Konnection(
         IPv6TestIpResolver(enableDebugLog)
     )
 ) {
-
     private val zeroAddress: NativePointed
     private val reachabilityRef: SCNetworkReachabilityRef
     private val reachabilitySerialQueue: dispatch_queue_t
