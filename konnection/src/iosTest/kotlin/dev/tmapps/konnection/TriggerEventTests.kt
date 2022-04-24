@@ -1,13 +1,14 @@
 package dev.tmapps.konnection
 
 import app.cash.turbine.test
+import dev.tmapps.konnection.utils.TriggerEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class CoroutinesTests {
+class TriggerEventTests {
 
     @Test
     fun `test MutableStateFlow of TriggerEvent`() = runTest {

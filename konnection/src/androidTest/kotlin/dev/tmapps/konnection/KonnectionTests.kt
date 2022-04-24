@@ -6,6 +6,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -24,8 +25,7 @@ import java.net.NetworkInterface
 class KonnectionTests {
     private val context = mockk<Context>(relaxed = true)
     private val connectivityManager = mockk<ConnectivityManager>(relaxed = true)
-
-    private val externalIpResolver = TestExternalIpResolver()
+    private val externalIpResolver = mockk<ExternalIpResolver>()
 
     private val konnection by lazy {
         Konnection(
@@ -200,7 +200,7 @@ class KonnectionTests {
         every { NetworkInterface.getNetworkInterfaces() } returns networkInterfaces.toEnumeration()
 
         val externalIpV4 = "192.192.192.192"
-        externalIpResolver.applyIp(externalIpV4)
+        coEvery { externalIpResolver.get() } returns externalIpV4
 
         Assert.assertEquals(IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = externalIpV4), konnection.getCurrentIpInfo())
     }

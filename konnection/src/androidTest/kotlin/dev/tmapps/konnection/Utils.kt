@@ -24,16 +24,6 @@ fun <T> List<T>.toEnumeration(): Enumeration<T> =
         }
     }
 
-class TestExternalIpResolver: ExternalIpResolver {
-    private var externalIp: String? = null
-
-    override suspend fun get(): String? = externalIp
-
-    fun applyIp(ip: String?) {
-        this.externalIp = ip
-    }
-}
-
 fun mockNetworkInterface(
     index: Int,
     name: String,

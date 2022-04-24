@@ -2,25 +2,22 @@ package dev.tmapps.konnection
 
 import dev.tmapps.konnection.resolvers.IPv6TestIpResolver
 import dev.tmapps.konnection.resolvers.MyExternalIpResolver
+import dev.tmapps.konnection.utils.IfaddrsInteractor
+import dev.tmapps.konnection.utils.IfaddrsInteractorImpl
+import dev.tmapps.konnection.utils.ReachabilityInteractor
+import dev.tmapps.konnection.utils.ReachabilityInteractorImpl
 import dev.tmapps.konnection.utils.TriggerEvent
-import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.StableRef
 import kotlinx.cinterop.alignOf
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.free
-import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.nativeHeap
-import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
-import kotlinx.cinterop.toKString
-import kotlinx.cinterop.value
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -31,8 +28,6 @@ import platform.SystemConfiguration.SCNetworkReachabilityCallBack
 import platform.SystemConfiguration.SCNetworkReachabilityContext
 import platform.SystemConfiguration.SCNetworkReachabilityCreateWithAddress
 import platform.SystemConfiguration.SCNetworkReachabilityFlags
-import platform.SystemConfiguration.SCNetworkReachabilityFlagsVar
-import platform.SystemConfiguration.SCNetworkReachabilityGetFlags
 import platform.SystemConfiguration.SCNetworkReachabilityRef
 import platform.SystemConfiguration.SCNetworkReachabilitySetCallback
 import platform.SystemConfiguration.SCNetworkReachabilitySetDispatchQueue
@@ -47,17 +42,12 @@ import platform.SystemConfiguration.kSCNetworkReachabilityFlagsIsWWAN
 import platform.SystemConfiguration.kSCNetworkReachabilityFlagsReachable
 import platform.SystemConfiguration.kSCNetworkReachabilityFlagsTransientConnection
 import platform.darwin.NSObjectProtocol
-import platform.darwin.dispatch_queue_t
 import platform.darwin.dispatch_queue_attr_make_with_qos_class
 import platform.darwin.dispatch_queue_create
-import platform.darwin.getifaddrs
-import platform.darwin.ifaddrs
+import platform.darwin.dispatch_queue_t
 import platform.posix.AF_INET
 import platform.posix.AF_INET6
 import platform.posix.QOS_CLASS_DEFAULT
-import platform.posix.NI_MAXHOST
-import platform.posix.NI_NUMERICHOST
-import platform.posix.getnameinfo
 import platform.posix.sockaddr
 import platform.posix.sockaddr_in
 
@@ -77,6 +67,10 @@ actual class Konnection(
     private val selfPtr: StableRef<Konnection>
 
     private val reachabilityBroadcaster = MutableStateFlow(TriggerEvent)
+
+    // need to be an `internal var` to allow unit tests
+    internal var reachabilityInteractor: ReachabilityInteractor = ReachabilityInteractorImpl()
+    internal var ifaddrsInteractor: IfaddrsInteractor = IfaddrsInteractorImpl(enableDebugLog)
 
     init {
         val sizeSockaddr = sizeOf<sockaddr_in>()
@@ -141,8 +135,7 @@ actual class Konnection(
         return isReachable && !needsConnection
     }
 
-    actual fun observeHasConnection(): Flow<Boolean> =
-        observeNetworkConnection().map { it != null }
+    actual fun observeHasConnection(): Flow<Boolean> = observeNetworkConnection().map { it != null }
 
     actual fun getCurrentNetworkConnection(): NetworkConnection? {
         val flags = getReachabilityFlags()
@@ -164,8 +157,8 @@ actual class Konnection(
         val networkConnection = getCurrentNetworkConnection() ?: return null
 
         val networkInterface = networkConnection.networkInterface
-        val ipv4 = getIfAddrs(networkInterface, AF_INET)
-        val ipv6 = getIfAddrs(networkInterface, AF_INET6)
+        val ipv4 = ifaddrsInteractor.get(networkInterface, AF_INET)
+        val ipv6 = ifaddrsInteractor.get(networkInterface, AF_INET6)
 
         return when (networkConnection) {
             NetworkConnection.WIFI -> IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6)
@@ -182,12 +175,8 @@ actual class Konnection(
         nativeHeap.free(zeroAddress)
     }
 
-    private fun getReachabilityFlags(): Array<SCNetworkReachabilityFlags> = memScoped {
-     // val flags = allocArray<SCNetworkReachabilityFlagsVar>(10) -> not working
-     // val flags = allocArrayOf<SCNetworkReachabilityFlagsVar>() -> not working
-        val flags = alloc<SCNetworkReachabilityFlagsVar>()
-
-        if (!SCNetworkReachabilityGetFlags(reachabilityRef, flags.ptr)) return emptyArray()
+    private fun getReachabilityFlags(): Array<SCNetworkReachabilityFlags> {
+        val flags = reachabilityInteractor.getReachabilityFlags(reachabilityRef) ?: return emptyArray()
 
         val result = arrayOf<SCNetworkReachabilityFlags>(
             kSCNetworkReachabilityFlagsTransientConnection,
@@ -201,37 +190,11 @@ actual class Konnection(
             kSCNetworkReachabilityFlagsIsWWAN,
             kSCNetworkReachabilityFlagsConnectionAutomatic
         ).filter {
-            (flags.value and it) > 0u
+            (flags and it) > 0u
         }
         .toTypedArray()
         debugLog("SCNetworkReachabilityFlags: ${result.contentDeepToString()}")
         return result
-    }
-
-    private fun getIfAddrs(netInterface: String, saFamily: Int): String? = memScoped {
-        val ifaddr = alloc<ifaddrs>()
-        if (getifaddrs(ifaddr.ptr.reinterpret()) == 0) {
-            var addr = ifaddr.ifa_next?.reinterpret<ifaddrs>()
-
-            while (addr != null) {
-                val socketAddr = addr.pointed.ifa_addr?.reinterpret<sockaddr>()
-                val currentSaFamily = socketAddr?.pointed?.sa_family
-
-                if (currentSaFamily?.toInt() == saFamily) {
-                    val ifaName = addr.pointed.ifa_name?.reinterpret<ByteVar>()?.toKString() ?: return@memScoped null
-                    if (ifaName == netInterface) {
-                        val saLen = socketAddr.pointed.sa_len
-                        val hostname = allocArray<ByteVar>(length = NI_MAXHOST)
-                        getnameinfo(socketAddr, saLen.toUInt(), hostname, NI_MAXHOST, null, 0, NI_NUMERICHOST)
-                        debugLog("hostname = ${hostname.pointed.value} | ipValue = ${hostname.toKString()}")
-                        return@memScoped hostname.toKString()
-                    }
-                }
-
-                addr = addr.pointed.ifa_next?.reinterpret<ifaddrs>()
-            }
-        }
-        return null
     }
 
     private val NetworkConnection.networkInterface: String
