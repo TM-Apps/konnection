@@ -14,10 +14,10 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: macOS-latest
-    
+
     strategy:
       matrix:
-        destination: ['platform=iOS Simulator,OS=15.2,name=iPhone 13']
+        destination: ['platform=iOS Simulator,OS=latest,name=iPhone 13']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -45,18 +45,37 @@ jobs:
     - name: library podspec
       run: cat konnection/Konnection.podspec
 
+    - name: install cocoapods
+      run: gem install cocoapods
+
+    - name: show build settings
+      run: |
+        cd samples/ios
+        xcodebuild -workspace Sample.xcworkspace -scheme Sample -showBuildSettings
+
+    - name: show build SDK
+      run: |
+        cd samples/ios
+        xcodebuild -workspace Sample.xcworkspace -scheme Sample -showsdks
+
+    - name: show available destinations
+      run: |
+        cd samples/ios
+        xcodebuild -workspace Sample.xcworkspace -scheme Sample -showdestinations
+
     - name: install pods
-      run: cd samples/ios && pod install
+      run: |
+        cd samples/ios
+        cd samples/ios && pod install
 
     - name: build sample app
       run: |
         cd samples/ios
         set -o pipefail
-        xcodebuild -workspace Sample.xcworkspace \
-           -scheme Sample \
+        xcodebuild clean build -workspace Sample.xcworkspace -scheme Sample \
            -sdk iphonesimulator \
            -destination "${{ matrix.destination }}" \
-           build | xcpretty -c
+           -showBuildTimingSummary | xcpretty -c
 
       #CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
 
