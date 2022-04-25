@@ -53,7 +53,7 @@ jobs:
       with:
         workspace: samples/ios/Sample.xcworkspace
         scheme: Sample
-        destination: name=iPhone 13
+        destination: name=iPhone 8
         sdk: iphoneos
         configuration: Debug
         action: build

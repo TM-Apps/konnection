@@ -1,8 +1,8 @@
-# define a global platform for project
-platform :ios, '14.0'
-source 'https://github.com/CocoaPods/Specs.git'
-
 use_frameworks!
+
+platform :ios, '12.4'
+
+install! 'cocoapods', :deterministic_uuids => false
 
 target 'Sample' do
   pod 'Konnection', :path => '../../konnection'
