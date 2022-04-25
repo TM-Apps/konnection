@@ -45,47 +45,15 @@ jobs:
     - name: library podspec
       run: cat konnection/Konnection.podspec
 
-    - name: install cocoapods
-      run: gem install cocoapods
-
-    - name: show build settings
-      run: |
-        cd samples/ios
-        xcodebuild -workspace Sample.xcworkspace -scheme Sample -showBuildSettings
-
-    - name: show build SDK
-      run: |
-        cd samples/ios
-        xcodebuild -workspace Sample.xcworkspace -scheme Sample -showsdks
-
-    - name: show available destinations
-      run: |
-        cd samples/ios
-        xcodebuild -workspace Sample.xcworkspace -scheme Sample -showdestinations
-
     - name: install pods
       run: cd samples/ios && pod install
 
     - name: build sample app
-      run: |
-        cd samples/ios
-        set -o pipefail
-        xcodebuild clean build -workspace Sample.xcworkspace -scheme Sample \
-           -sdk iphonesimulator \
-           -destination "${{ matrix.destination }}" \
-           -showBuildTimingSummary | xcpretty -c
-
-      #CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
-
-      #run: |
-      #  cd ios
-      #  set -eo pipefail
-      #  xcodebuild -workspace Sample.xcworkspace \
-      #    -scheme Sample \
-      #    -sdk iphoneos \
-      #    -configuration AppStoreDistribution \
-      #    -archivePath $PWD/build/Sample.xcarchive \
-      #    clean archive | xcpretty
-
-      env:
-        destination: ${{ matrix.destination }}
+      uses: sersoft-gmbh/xcodebuild-action@v1
+      with:
+        workspace: samples/ios/Sample.xcworkspace
+        scheme: Sample
+        destination: name=iPhone 13
+        sdk: iphoneos
+        configuration: Debug
+        action: build
