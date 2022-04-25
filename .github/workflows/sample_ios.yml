@@ -40,7 +40,7 @@ jobs:
       run: /usr/bin/xcodebuild -version
 
     - name: build konnection library
-      run: ./gradlew :konnection:build #:konnection:generateDummyFramework
+      run: ./gradlew :konnection:iosX64Test #:konnection:generateDummyFramework
 
     - name: library podspec
       run: cat konnection/Konnection.podspec
