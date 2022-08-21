@@ -23,7 +23,7 @@ import java.net.NetworkInterface
 actual class Konnection(
     context: Context,
     private val enableDebugLog: Boolean = false,
-    private val externalIpResolvers: List<ExternalIpResolver> = listOf(
+    private val ipResolvers: List<IpResolver> = listOf(
         MyExternalIpResolver(enableDebugLog),
         IPv6TestIpResolver(enableDebugLog)
     )
@@ -161,7 +161,7 @@ actual class Konnection(
     }
 
     private suspend fun getExternalIp(): String? = withContext(Dispatchers.IO) {
-        externalIpResolvers.firstNotNullOfOrNull { it.get() }
+        ipResolvers.firstNotNullOfOrNull { it.get() }
     }
 
     private fun debugLog(message: String, error: Throwable? = null) {

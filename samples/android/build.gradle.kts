@@ -19,13 +19,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    compileSdk = 32
-    buildToolsVersion = "32.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.0"
 
     defaultConfig {
         applicationId = "dev.tmapps.konnection.sample"
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -33,7 +33,7 @@ android {
 
     composeOptions {
         // kotlinCompilerVersion = kotlinVersion
-        kotlinCompilerExtensionVersion = "1.2.0-dev-k1.6.20-61e81dadb1c" // temporary until final Compose is released to kotlin 1.6.20
+        kotlinCompilerExtensionVersion = composeCompilerVersion
     }
 
     testOptions.unitTests.isIncludeAndroidResources = true

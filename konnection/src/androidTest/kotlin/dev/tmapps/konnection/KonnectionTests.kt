@@ -25,12 +25,12 @@ import java.net.NetworkInterface
 class KonnectionTests {
     private val context = mockk<Context>(relaxed = true)
     private val connectivityManager = mockk<ConnectivityManager>(relaxed = true)
-    private val externalIpResolver = mockk<ExternalIpResolver>()
+    private val externalIpResolver = mockk<IpResolver>()
 
     private val konnection by lazy {
         Konnection(
             context = context,
-            externalIpResolvers = listOf(externalIpResolver)
+            ipResolvers = listOf(externalIpResolver)
         )
     }
 

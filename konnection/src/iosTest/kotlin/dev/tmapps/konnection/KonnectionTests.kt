@@ -21,12 +21,12 @@ import kotlin.test.assertTrue
 
 class KonnectionTests {
 
-    @Mock private val externalIpResolver = mock(classOf<ExternalIpResolver>())
+    @Mock private val externalIpResolver = mock(classOf<IpResolver>())
     @Mock private val reachabilityInteractor = mock(classOf<ReachabilityInteractor>())
     @Mock private val ifaddrsInteractor = mock(classOf<IfaddrsInteractor>())
 
     private val konnection by lazy {
-        Konnection(externalIpResolvers = listOf(externalIpResolver)).apply {
+        Konnection(ipResolvers = listOf(externalIpResolver)).apply {
             reachabilityInteractor = this@KonnectionTests.reachabilityInteractor
             ifaddrsInteractor = this@KonnectionTests.ifaddrsInteractor
         }
