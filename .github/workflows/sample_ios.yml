@@ -48,7 +48,7 @@ jobs:
         project: samples/ios/Sample.xcodeproj
         scheme: Sample
         configuration: Debug
-        action: showdestinations
+        action: -showdestinations
 
     - name: build sample app
       uses: sersoft-gmbh/xcodebuild-action@v2
