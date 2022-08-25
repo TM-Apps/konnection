@@ -42,8 +42,8 @@ jobs:
     - name: build konnection library
       run: ./gradlew :konnection:iosX64Test #:konnection:generateDummyFramework
 
-    - name: create simulator
-      run: xcrun simctl create "iPhone 8" "com.apple.CoreSimulator.SimDeviceType.iPhone-8" "com.apple.CoreSimulator.SimRuntime.iOS-15-2"
+    #- name: create simulator
+    #  run: xcrun simctl create "iPhone 8" "com.apple.CoreSimulator.SimDeviceType.iPhone-8" "com.apple.CoreSimulator.SimRuntime.iOS-15-2"
 
     - name: build sample app
       uses: sersoft-gmbh/xcodebuild-action@v2
