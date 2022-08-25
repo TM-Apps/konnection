@@ -42,11 +42,19 @@ jobs:
     - name: build konnection library
       run: ./gradlew :konnection:iosX64Test #:konnection:generateDummyFramework
 
+    - name: show available destinations for sample app
+      uses: sersoft-gmbh/xcodebuild-action@v2
+      with:
+        project: samples/ios/Sample.xcodeproj
+        scheme: Sample
+        configuration: Debug
+        action: showdestinations
+
     - name: build sample app
       uses: sersoft-gmbh/xcodebuild-action@v2
       with:
         project: samples/ios/Sample.xcodeproj
         scheme: Sample
-        destination: name=iPhone 13
+        #destination: name=iPhone 13
         configuration: Debug
         action: build
