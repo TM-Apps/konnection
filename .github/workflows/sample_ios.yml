@@ -43,9 +43,9 @@ jobs:
       run: ./gradlew :konnection:iosX64Test #:konnection:generateDummyFramework
 
     - name: build sample app
-      uses: sersoft-gmbh/xcodebuild-action@v1
+      uses: sersoft-gmbh/xcodebuild-action@v2
       with:
-        workspace: samples/ios/Sample.xcodeproj
+        project: samples/ios/Sample.xcodeproj
         scheme: Sample
         destination: name=iPhone 8
         sdk: iphoneos
