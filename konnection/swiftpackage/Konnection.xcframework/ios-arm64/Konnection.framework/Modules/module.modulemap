@@ -1,0 +1,8 @@
+framework module Konnection {
+    umbrella header "Konnection.h"
+
+    export *
+    module * { export * }
+
+    use Foundation
+}

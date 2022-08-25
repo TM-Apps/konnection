@@ -1,13 +1,10 @@
 package scripts
 
 import isMacOsMachine
-import org.jetbrains.kotlin.gradle.tasks.PodspecTask
-import summary
-import url
 
 plugins {
     kotlin("multiplatform") apply false
-    kotlin("native.cocoapods")
+    id("com.chromaticnoise.multiplatform-swiftpackage")
 }
 
 if (isMacOsMachine()) {
@@ -27,50 +24,12 @@ kotlin {
         }
     }
 
-    cocoapods {
-        // configure fields required by CocoaPods
-        version = project.version.toString()
-        summary = project.summary
-        homepage = project.url
-
-        // set the name for the produced framework, the module name is applied by default
-        name = moduleFrameworkName
-
-        framework {
-            baseName = moduleFrameworkName
-            isStatic = false // SwiftUI preview requires dynamic framework
+    multiplatformSwiftPackage {
+        packageName(moduleFrameworkName)
+        swiftToolsVersion("5.3")
+        targetPlatforms {
+            iOS { v("13") }
         }
-
-        ios.deploymentTarget = "12.4"
-        podfile = project.file("../samples/ios/Podfile")
-    }
-}
-
-// apply podspec file adjustments...
-tasks.getByName<PodspecTask>("podspec") {
-    doLast {
-        val podspecFile = file("${projectDir}/${moduleFrameworkName}.podspec")
-        val newPodspecContent = mutableListOf<String>()
-        var trimLineBefore: String? = null
-        podspecFile.forEachLine { originalLine ->
-            var line = originalLine
-            val trimLine = line.trim()
-
-            if (trimLine.startsWith("spec.name")) {
-                line = line.replaceFirst("=.*".toRegex(), "= \'$moduleFrameworkName\'")
-            }
-            if (trimLine.startsWith("spec.vendored_frameworks")) {
-                line = line.replaceFirst("=.*".toRegex(), "= \"build/cocoapods/framework/#{spec.name}.framework\"")
-            }
-            if (trimLine.startsWith(":name")) {
-                line = line.replaceFirst("=.*".toRegex(), "=> 'Build $moduleFrameworkName library',")
-            }
-            if (trimLine != trimLineBefore) {
-                newPodspecContent.add(line)
-            }
-            trimLineBefore = trimLine
-        }
-        podspecFile.writeText(newPodspecContent.joinToString("\n"))
     }
 }
 

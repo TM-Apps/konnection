@@ -42,9 +42,6 @@ jobs:
     - name: build konnection library
       run: ./gradlew :konnection:iosX64Test #:konnection:generateDummyFramework
 
-    - name: library podspec
-      run: cat konnection/Konnection.podspec
-
     - name: build sample app
       uses: sersoft-gmbh/xcodebuild-action@v1
       with:

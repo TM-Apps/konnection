@@ -38,6 +38,9 @@ jobs:
     - name: build
       run: ./gradlew :konnection:build #:konnection:generateDummyFramework
 
+    - name: Swift Package
+      run: ./gradlew :konnection:createSwiftPackage
+
     - name: publish
       env:
         SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
