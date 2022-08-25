@@ -47,7 +47,6 @@ jobs:
       with:
         project: samples/ios/Sample.xcodeproj
         scheme: Sample
-        destination: name=iPhone 8
-        sdk: iphoneos
+        destination: platform=iOS
         configuration: Debug
         action: build
