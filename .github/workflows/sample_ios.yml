@@ -47,6 +47,6 @@ jobs:
       with:
         project: samples/ios/Sample.xcodeproj
         scheme: Sample
-        destination: platform=iOS
+        destination: platform:iOS Simulator
         configuration: Debug
         action: build
