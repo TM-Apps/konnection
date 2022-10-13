@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.tmapps:konnection:1.1.8'
+    implementation 'dev.tmapps:konnection:1.1.9'
 }
 ```
 
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.1.8")
+    implementation("dev.tmapps:konnection:1.1.9")
 }
 ```
 
@@ -34,7 +34,7 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.1.8")
+        implementation("dev.tmapps:konnection:1.1.9")
     }
 }
 ```
