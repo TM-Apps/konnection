@@ -43,7 +43,7 @@ kotlin {
         val androidMain by getting {
             kotlin.srcDir("src/androidMain/kotlin")
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
+                implementation(kotlin("stdlib"))
                 implementation(Dependencies.androidXAnnotation)
             }
         }

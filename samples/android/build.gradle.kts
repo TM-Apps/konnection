@@ -96,10 +96,12 @@ dependencies {
     implementation(Dependencies.androidXAppCompact)
     implementation(Dependencies.androidXCoreKtx)
 
+    implementation(platform(Dependencies.composeBom))
     implementation(Dependencies.composeCompiler)
     implementation(Dependencies.composeFoundation)
     implementation(Dependencies.composeUI)
-    implementation(Dependencies.composeUITooling)
+    implementation(Dependencies.composeUIToolingPreview)
+    debugImplementation(Dependencies.composeUITooling)
     implementation(Dependencies.composeMaterialDesign)
     implementation(Dependencies.composeMaterialIconsCore)
     implementation(Dependencies.composeMaterialIconsExtended)
@@ -113,4 +115,5 @@ dependencies {
     androidTestImplementation(Dependencies.androidTestRunner)
     androidTestImplementation(Dependencies.androidJunit)
     androidTestImplementation(Dependencies.androidExpressoCore)
+ // androidTestImplementation(platform(Dependencies.composeBom))
 }

@@ -15,7 +15,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Konnection",
-            path: "./Konnection.xcframework"
+            path: "../build/XCFrameworks/release/Konnection.xcframework"
         ),
     ]
 )

@@ -3,32 +3,33 @@
  * other library modules to build.
  */
 object Dependencies {
-    const val kotlinJdk = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    const val kotlinJdk = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
     const val kotlinCoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     const val kotlinCoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
-    const val kotlinCoroutinesNativeMt = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesMtVersion"
     const val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
 
     // Jetpack Compose libraries
     const val composeCompiler = "androidx.compose.compiler:compiler:$composeCompilerVersion"
-    const val composeUI = "androidx.compose.ui:ui:$composeVersion"
+    const val composeBom = "androidx.compose:compose-bom:$composeVersion"
+    const val composeUI = "androidx.compose.ui:ui"
     // Tooling support (Previews, etc.)
-    const val composeUITooling = "androidx.compose.ui:ui-tooling:$composeVersion"
+    const val composeUIToolingPreview = "androidx.compose.ui:ui-tooling-preview"
+    const val composeUITooling = "androidx.compose.ui:ui-tooling"
     // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-    const val composeFoundation = "androidx.compose.foundation:foundation:$composeVersion"
-    // Material Design
-    const val composeMaterialDesign = "androidx.compose.material:material:$composeVersion"
+    const val composeFoundation = "androidx.compose.foundation:foundation"
+    // Material Design 2
+    const val composeMaterialDesign = "androidx.compose.material:material"
     // Material design icons
-    const val composeMaterialIconsCore = "androidx.compose.material:material-icons-core:$composeVersion"
-    const val composeMaterialIconsExtended = "androidx.compose.material:material-icons-extended:$composeVersion"
+    const val composeMaterialIconsCore = "androidx.compose.material:material-icons-core"
+    const val composeMaterialIconsExtended = "androidx.compose.material:material-icons-extended"
     // Compose APIs for Activity
     const val composeActivity = "androidx.activity:activity-compose:1.5.0"
     // Integration with observables
-    const val composeRuntime = "androidx.compose.runtime:runtime:$composeVersion"
- // const val composeLiveData = "androidx.compose.runtime:runtime-livedata:$compose_version"
+    const val composeRuntime = "androidx.compose.runtime:runtime"
+ // const val composeLiveData = "androidx.compose.runtime:runtime-livedata"
     // UI tests
-    const val composeUITests = "androidx.compose.ui:ui-test:$composeVersion"
+    const val composeUITests = "androidx.compose.ui:ui-test"
 
     const val androidXAppCompact = "androidx.appcompat:appcompat:1.5.0"
     const val androidXAnnotation = "androidx.annotation:annotation:1.4.0"

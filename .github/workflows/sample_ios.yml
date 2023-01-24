@@ -39,8 +39,11 @@ jobs:
     - name: Xcode version
       run: /usr/bin/xcodebuild -version
 
-    - name: build konnection library
+    - name: build Konnection library
       run: ./gradlew :konnection:iosX64Test #:konnection:generateDummyFramework
+
+    - name: create XCFramework
+      run: ./gradlew :konnection:assembleKonnectionXCFramework
 
     #- name: create simulator
     #  run: xcrun simctl create "iPhone 8" "com.apple.CoreSimulator.SimDeviceType.iPhone-8" "com.apple.CoreSimulator.SimRuntime.iOS-15-2"

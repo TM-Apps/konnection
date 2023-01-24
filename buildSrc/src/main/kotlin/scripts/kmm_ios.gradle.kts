@@ -1,10 +1,11 @@
 package scripts
 
 import isMacOsMachine
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform") apply false
-    id("com.chromaticnoise.multiplatform-swiftpackage")
 }
 
 if (isMacOsMachine()) {
@@ -16,20 +17,31 @@ kotlin {
  // const val buildForDevice = project.findProperty('kotlin.native.cocoapods.target') == 'ios_arm'
  // const val buildForDevice = project.findProperty('device')?.toBoolean() ?: false
 
-    ios {
+    val xcf = XCFramework(moduleFrameworkName)
+
+    fun nativeTargetConfig(): KotlinNativeTarget.() -> Unit = {
         binaries {
-            framework {
-                baseName = moduleFrameworkName
+            framework(moduleFrameworkName) {
+                //baseName = "HumanKt"
+                isStatic = true
+
+                xcf.add(this)
             }
         }
     }
 
-    multiplatformSwiftPackage {
-        packageName(moduleFrameworkName)
-        swiftToolsVersion("5.3")
-        targetPlatforms {
-            iOS { v("13") }
-        }
+    ios(configure = nativeTargetConfig())
+    iosSimulatorArm64(configure = nativeTargetConfig())
+
+    sourceSets {
+        val iosMain by getting
+
+        val iosSimulatorArm64Main by getting
+        iosSimulatorArm64Main.dependsOn(iosMain)
+
+        val iosTest by sourceSets.getting
+        val iosSimulatorArm64Test by sourceSets.getting
+        iosSimulatorArm64Test.dependsOn(iosTest)
     }
 }
 

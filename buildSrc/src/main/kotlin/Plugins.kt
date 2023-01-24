@@ -1,5 +1,5 @@
 object BuildPlugins {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.2.2"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.4.0"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     const val detekt = "io.gitlab.arturbosch.detekt"
 
