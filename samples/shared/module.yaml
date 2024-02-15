@@ -1,0 +1,17 @@
+product: 
+  type: lib
+  platforms: [android, iosArm64, iosSimulatorArm64, iosX64]
+
+dependencies:
+  - ../../konnection
+  - $compose.runtime
+  - $compose.foundation
+  - $compose.material
+  - $compose.materialIconsExtended
+
+settings:
+  compose: enabled
+  kotlin:
+    serialization: json
+  android:
+    namespace: dev.tmapps.konnection.sample

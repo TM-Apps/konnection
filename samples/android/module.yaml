@@ -1,0 +1,13 @@
+product: android/app
+
+dependencies:
+  - ../shared
+  - $libs.compose.ui
+  - $libs.compose.ui.tooling.preview
+  - $libs.androidx.activity.compose
+
+settings:
+  compose: enabled
+  android:
+    applicationId: dev.tmapps.konnection.sample.android
+    namespace: dev.tmapps.konnection.sample.android

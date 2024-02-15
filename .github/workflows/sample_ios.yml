@@ -22,13 +22,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     #- name: Install gpg
     #  run: brew install gnupg
 
     - name: setup JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
         java-version: 17
@@ -39,20 +39,5 @@ jobs:
     - name: Xcode version
       run: /usr/bin/xcodebuild -version
 
-    - name: build Konnection library
-      run: ./gradlew :konnection:iosX64Test #:konnection:generateDummyFramework
-
-    - name: create XCFramework
-      run: ./gradlew :konnection:assembleKonnectionXCFramework
-
-    #- name: create simulator
-    #  run: xcrun simctl create "iPhone 8" "com.apple.CoreSimulator.SimDeviceType.iPhone-8" "com.apple.CoreSimulator.SimRuntime.iOS-15-2"
-
     - name: build sample app
-      uses: sersoft-gmbh/xcodebuild-action@v2
-      with:
-        project: samples/ios/Sample.xcodeproj
-        scheme: Sample
-        destination: name=iPhone 8
-        configuration: Debug
-        action: build
+      run: ./gradlew samples:ios:build

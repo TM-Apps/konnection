@@ -1,0 +1,9 @@
+<resources>
+    <!-- base app theme -->
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primaryDark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+</resources>

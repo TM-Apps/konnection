@@ -1,59 +1,96 @@
 plugins {
     kotlin("multiplatform")
-    id(BuildPlugins.googleKsp).version(kspVersion)
-    id(BuildPlugins.detekt).version(detektVersion)
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("maven-publish")
+    id("signing")
 }
 
 group = "dev.tmapps"
-version = "1.1.10"
-
-repositories {
-    google()
-    mavenCentral()
-}
-
-kotlin {
-    sourceSets {
-        all {
-            languageSettings.apply {
-                progressiveMode = true
-                experimentalAnnotations.forEach { optIn(it) }
-                //  languageVersion = "1.6" // possible values: '1.0', '1.1', .., '1.6'
-                //  apiVersion = "1.6" // possible values: '1.0', .., '1.6'
-                //  enableLanguageFeature("InlineClasses") // language feature name
-            }
-        }
-    }
-
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation(Dependencies.kotlinCoroutinesCore)
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-                implementation(Dependencies.kotlinCoroutinesTest)
-                implementation(Dependencies.mockative)
-                implementation(Dependencies.turbine)
-            }
-        }
-    }
-
-    sourceSets.matching { it.name.endsWith("Test") }
-        .configureEach {
-            languageSettings.optIn("kotlin.RequiresOptIn")
-            languageSettings.optIn("kotlin.time.ExperimentalTime")
-        }
-}
+version = "1.1.11"
 
 dependencies {
-    ksp(Dependencies.mockativeProcessor)
+    configurations
+        .filter { it.name.startsWith("ksp") && it.name.contains("Test") }
+        .forEach {
+            add(it.name, "io.mockative:mockative-processor:2.0.1")
+        }
 }
 
-apply(plugin = ScriptPlugins.kmmAndroid)
-apply(plugin = ScriptPlugins.kmmIoS)
-apply(plugin = ScriptPlugins.publish)
+// publishing
+
+kotlin {
+    android {
+        publishLibraryVariants("release", "debug")
+    // publishAllLibraryVariants()
+    }
+}
+
+val libSourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+// from(sourceSets.main.get().allSource)
+}
+
+val libJavadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+// from(sourceSets.main.get().allSource)
+}
+
+publishing {
+    publications {
+        withType<MavenPublication>().all {
+            pom {
+                withXml {
+                    asNode().apply {
+                        appendNode("name", project.name)
+                        appendNode("description", "A Kotlin Multiplatform library for Network Connection data.")
+                        appendNode("url", "https://github.com/TM-Apps/konnection")
+                    }
+                }
+                licenses {
+                    license {
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("magnumrocha")
+                        name.set("Magnum Rocha")
+                        organization.set("TMApps")
+                        organizationUrl.set("http://github.com/TM-Apps")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/TM-Apps/konnection")
+                }
+            }
+
+            if (name == "kotlinMultiplatform") {
+                // artifact(libSourcesJar.get()) { archiveClassifier.set("sources") }
+                artifact(libJavadocJar.get()) //{ archiveClassifier.set("javadoc") }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("SONATYPE_USER")
+                password = System.getenv("SONATYPE_PASSWORD")
+            }
+        }
+    }
+}
+
+val signingKey = System.getenv("SIGN_KEY_PRIVATE")
+
+if (signingKey != null) {
+    val signingKeyId = System.getenv("SIGN_KEY_ID")
+    val signingPassword = System.getenv("SIGN_KEY_PASSPHRASE")
+
+    signing {
+        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+        sign(publishing.publications)
+    }
+}
