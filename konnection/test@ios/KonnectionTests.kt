@@ -2,7 +2,9 @@ package dev.tmapps.konnection
 
 import dev.tmapps.konnection.utils.IfaddrsInteractor
 import dev.tmapps.konnection.utils.ReachabilityInteractor
+import io.mockative.Invocation
 import io.mockative.Mock
+import io.mockative.Mockable
 import io.mockative.any
 import io.mockative.classOf
 import io.mockative.coEvery
@@ -11,6 +13,8 @@ import io.mockative.every
 import io.mockative.mock
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.test.runTest
+import platform.SystemConfiguration.SCNetworkReachabilityFlags
+import platform.SystemConfiguration.SCNetworkReachabilityRef
 import platform.SystemConfiguration.kSCNetworkReachabilityFlagsConnectionRequired
 import platform.SystemConfiguration.kSCNetworkReachabilityFlagsIsWWAN
 import platform.SystemConfiguration.kSCNetworkReachabilityFlagsReachable
@@ -23,9 +27,9 @@ import kotlin.test.assertTrue
 
 @OptIn(ExperimentalForeignApi::class)
 class KonnectionTests {
-/*
+
     @Mock private val externalIpResolver = mock(classOf<IpResolver>())
-    @Mock private val reachabilityInteractor = mock(classOf<ReachabilityInteractor>())
+    @Mock private val reachabilityInteractor = ReachabilityInteractorMock()
     @Mock private val ifaddrsInteractor = mock(classOf<IfaddrsInteractor>())
 
     private val konnection by lazy {
@@ -111,5 +115,16 @@ class KonnectionTests {
 
         assertEquals(IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = externalIpV4), konnection.getCurrentIpInfo())
     }
-*/
+}
+
+// Workaroung to avoid Compilations Issues with @OptIn annotated classes
+// https://github.com/mockative/mockative/issues/75
+@OptIn(ExperimentalForeignApi::class)
+private class ReachabilityInteractorMock : Mockable(stubsUnitByDefault = true), ReachabilityInteractor {
+    override fun getReachabilityFlags(
+        reachabilityRef: SCNetworkReachabilityRef
+    ):SCNetworkReachabilityFlags? =
+       invoke<SCNetworkReachabilityFlags?>(
+           Invocation.Function("getReachabilityFlags",listOf<Any?>(`reachabilityRef`)), false
+       )
 }

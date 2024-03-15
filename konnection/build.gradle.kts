@@ -19,7 +19,7 @@ dependencies {
 // publishing
 
 kotlin {
-    android {
+    androidTarget {
         publishLibraryVariants("release", "debug")
     // publishAllLibraryVariants()
     }
