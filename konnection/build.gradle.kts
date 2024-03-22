@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.tmapps"
-version = "1.1.11"
+version = "1.2.0"
 
 dependencies {
     configurations
@@ -14,6 +14,13 @@ dependencies {
         .forEach {
             add(it.name, "io.mockative:mockative-processor:2.0.1")
         }
+}
+
+tasks.jvmTest {
+    jvmArgs(
+        "--add-opens", "java.base/java.net=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED"
+    )
 }
 
 // publishing

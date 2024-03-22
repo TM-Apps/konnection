@@ -161,14 +161,14 @@ class KonnectionTests {
                 index = 0,
                 name = "fake-NetworkInterface-0",
                 inetAddresses = listOf(
-                    mockInet4Address(hostAddress = "255.255.255.255", isLoopbackAddress = false),
+                    mockInet4Address(hostAddress = ipv4, isLoopbackAddress = false),
                     mockInet6Address(hostAddress = ipv6, isLoopbackAddress = false)
                 )
             )
         )
 
         mockkStatic(NetworkInterface::class)
-        every { NetworkInterface.getNetworkInterfaces() } returns networkInterfaces.toEnumeration()
+        every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
         Assert.assertEquals(IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6), konnection.getCurrentIpInfo())
     }
@@ -191,13 +191,13 @@ class KonnectionTests {
                 index = 0,
                 name = "fake-NetworkInterface-0",
                 inetAddresses = listOf(
-                    mockInet4Address(hostAddress = "255.255.255.255", isLoopbackAddress = false)
+                    mockInet4Address(hostAddress = ipv4, isLoopbackAddress = false)
                 )
             )
         )
 
         mockkStatic(NetworkInterface::class)
-        every { NetworkInterface.getNetworkInterfaces() } returns networkInterfaces.toEnumeration()
+        every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
         val externalIpV4 = "192.192.192.192"
         coEvery { externalIpResolver.get() } returns externalIpV4

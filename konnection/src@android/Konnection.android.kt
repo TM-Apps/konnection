@@ -64,12 +64,7 @@ actual class Konnection(
         }
     }
 
-    actual fun isConnected(): Boolean =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            postAndroidMInternetCheck(connectivityManager)
-        } else {
-            preAndroidMInternetCheck(connectivityManager)
-        }
+    actual fun isConnected(): Boolean = getCurrentNetworkConnection() != null
 
     actual fun observeHasConnection(): Flow<Boolean> = connectionPublisher.map { it != null }
 
@@ -89,22 +84,12 @@ actual class Konnection(
         return getNetworkConnection(capabilities)
     }
 
-    // region post Android M
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun postAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean =
-        postAndroidMNetworkConnection(connectivityManager) != null
-
     @TargetApi(Build.VERSION_CODES.M)
     private fun postAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection? {
         val network = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(network)
         return getNetworkConnection(capabilities)
     }
-    // endregion
-
-    // region pre Android M
-    private fun preAndroidMInternetCheck(connectivityManager: ConnectivityManager): Boolean =
-        preAndroidMNetworkConnection(connectivityManager) != null
 
     @Suppress("DEPRECATION")
     private fun preAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection? =
@@ -113,7 +98,6 @@ actual class Konnection(
             ConnectivityManager.TYPE_WIFI -> NetworkConnection.WIFI
             else -> NetworkConnection.MOBILE
         }
-    // endregion
 
     private fun getNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
         when {
@@ -128,13 +112,12 @@ actual class Konnection(
             else -> null
         }
 
-    private suspend fun getIpInfo(networkConnection: NetworkConnection?): IpInfo? {
-        if (networkConnection == null) return null
+    private suspend fun getIpInfo(networkConnection: NetworkConnection?): IpInfo? = withContext(Dispatchers.IO) {
+        if (networkConnection == null) return@withContext null
         try {
             var ipv4: String? = null
             var ipv6: String? = null
 
-            @Suppress("BlockingMethodInNonBlockingContext")
             val networks = NetworkInterface.getNetworkInterfaces()
 
             while (networks.hasMoreElements()) {
@@ -150,13 +133,14 @@ actual class Konnection(
                 }
             }
 
-            return when (networkConnection) {
+            return@withContext when (networkConnection) {
                 NetworkConnection.WIFI -> IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6)
                 NetworkConnection.MOBILE -> IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
+                NetworkConnection.ETHERNET -> IpInfo.EthernetIpInfo(ipv4 = ipv4, ipv6 = ipv6)
             }
         } catch (ex: Exception) {
             debugLog("getIpInfo networkConnection = $networkConnection", ex)
-            return null
+            return@withContext null
         }
     }
 

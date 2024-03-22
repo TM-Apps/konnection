@@ -9,12 +9,12 @@ class IPv6TestIpResolver(
 ): IpResolver {
     companion object {
         private const val TAG = "IPv6TestIpResolver"
-        private const val serviceUrl = "https://v4v6.ipv6-test.com/api/myip.php"
+        private const val SERVICE_URL = "https://v4v6.ipv6-test.com/api/myip.php"
     }
 
     override suspend fun get(): String? =
         try {
-            getUrlContent(serviceUrl)
+            getUrlContent(SERVICE_URL)
         } catch (error: Exception) {
             if (enableDebugLog) {
                 logError(TAG, "error on get()", error)

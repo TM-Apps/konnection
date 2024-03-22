@@ -18,7 +18,7 @@ import platform.posix.NI_NUMERICHOST
 import platform.posix.getnameinfo
 import platform.posix.sockaddr
 
-interface IfaddrsInteractor {
+internal interface IfaddrsInteractor {
     fun get(netInterface: String, saFamily: Int): String?
 }
 

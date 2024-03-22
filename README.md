@@ -6,17 +6,6 @@ A Kotlin Multiplatform Mobile library to emit Network Connection status.
 
 ## Add to your project
 
-### build.gradle
-```groovy
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'dev.tmapps:konnection:1.1.11'
-}
-```
-
 ### build.gradle.kts
 ```groovy
 repositories {
@@ -24,27 +13,28 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.1.11")
+    implementation("dev.tmapps:konnection:1.2.0")
 }
 ```
 
-### Multiplatform (Common, Android, iOS)
+### Multiplatform (Common, JVM, Android, iOS)
 In common code that should get compiled for different platforms, you can add dependency right to the `commonMain` source set:
 ```groovy
 commonMain {
     dependencies {
         // works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.1.11")
+        implementation("dev.tmapps:konnection:1.2.0")
     }
 }
 ```
 
 ## Usage
 
-### on Android
+### on Android or JVM
 ```kotlin
 // instantiate the Konnection class with a android.content.Context
 // you can enable or disable internal library debug logging, default is false...
+// for JVM, there is an extra parameter: `connectionCheckTime = 5.seconds` to allow control the check connection check time.
 val konnection = Konnection(context, enableDebugLog = true)
 
 // get the immediate connection state

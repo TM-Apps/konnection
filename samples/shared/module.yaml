@@ -1,6 +1,6 @@
 product: 
   type: lib
-  platforms: [android, iosArm64, iosSimulatorArm64, iosX64]
+  platforms: [jvm, android, iosArm64, iosSimulatorArm64, iosX64]
 
 dependencies:
   - ../../konnection
@@ -15,3 +15,5 @@ settings:
     serialization: json
   android:
     namespace: dev.tmapps.konnection.sample
+  ios:
+    deploymentTarget: 17

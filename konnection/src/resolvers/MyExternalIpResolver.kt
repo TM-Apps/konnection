@@ -9,12 +9,12 @@ class MyExternalIpResolver(
 ): IpResolver {
     companion object {
         private const val TAG = "MyExternalIpResolver"
-        private const val serviceUrl = "https://myexternalip.com/raw"
+        private const val SERVICE_URL = "https://myexternalip.com/raw"
     }
 
     override suspend fun get(): String? =
         try {
-            getUrlContent(serviceUrl)
+            getUrlContent(SERVICE_URL)
         } catch (error: Exception) {
             if (enableDebugLog) {
                 logError(TAG, "error on get()", error)

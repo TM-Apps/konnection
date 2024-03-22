@@ -1,5 +1,5 @@
 package dev.tmapps.konnection
 
 enum class NetworkConnection {
-    WIFI, MOBILE
+    WIFI, MOBILE, ETHERNET
 }

@@ -1,10 +1,12 @@
 package dev.tmapps.konnection
 
-import android.util.Log
 import java.net.URL
+import java.util.logging.Logger
 
 internal actual fun getUrlContent(url: String): String? = URL(url).readText()
 
 internal actual fun logError(tag: String, message: String, error: Throwable) {
-    Log.e(tag, message, error)
+    logger.severe("$tag - $message\n$error")
 }
+
+private val logger by lazy { Logger.getLogger("Konnection") }

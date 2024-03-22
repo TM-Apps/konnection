@@ -165,6 +165,7 @@ actual class Konnection(
         return when (networkConnection) {
             NetworkConnection.WIFI -> IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6)
             NetworkConnection.MOBILE -> IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
+            NetworkConnection.ETHERNET -> IpInfo.EthernetIpInfo(ipv4 = ipv4, ipv6 = ipv6)
         }
     }
 
@@ -203,6 +204,7 @@ actual class Konnection(
         get() = when (this) {
             NetworkConnection.WIFI -> "en0"
             NetworkConnection.MOBILE -> "pdp_ip0"
+            NetworkConnection.ETHERNET -> "en1"
         }
 
     private suspend fun getExternalIp(): String? =

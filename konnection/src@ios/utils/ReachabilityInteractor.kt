@@ -11,7 +11,7 @@ import platform.SystemConfiguration.SCNetworkReachabilityGetFlags
 import platform.SystemConfiguration.SCNetworkReachabilityRef
 
 @OptIn(ExperimentalForeignApi::class)
-interface ReachabilityInteractor {
+internal interface ReachabilityInteractor {
     fun getReachabilityFlags(
         reachabilityRef: SCNetworkReachabilityRef
     ): SCNetworkReachabilityFlags?

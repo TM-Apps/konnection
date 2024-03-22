@@ -1,5 +1,5 @@
 package dev.tmapps.konnection
 
-expect fun getUrlContent(url: String): String?
+internal expect fun getUrlContent(url: String): String?
 
-expect fun logError(tag: String, message: String, error: Throwable)
+internal expect fun logError(tag: String, message: String, error: Throwable)

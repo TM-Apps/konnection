@@ -117,7 +117,7 @@ class KonnectionTests {
     }
 }
 
-// Workaroung to avoid Compilations Issues with @OptIn annotated classes
+// Workaround to avoid Compilations Issues with @OptIn annotated classes
 // https://github.com/mockative/mockative/issues/75
 @OptIn(ExperimentalForeignApi::class)
 private class ReachabilityInteractorMock : Mockable(stubsUnitByDefault = true), ReachabilityInteractor {

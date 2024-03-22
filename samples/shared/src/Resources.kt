@@ -2,6 +2,7 @@ package dev.tmapps.konnection.sample
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.outlined.NetworkCell
 import androidx.compose.material.icons.outlined.SignalCellular4Bar
 import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -12,6 +13,7 @@ val NetworkConnection?.icon: ImageVector
     get() = when (this) {
         NetworkConnection.WIFI -> Icons.Outlined.Wifi
         NetworkConnection.MOBILE -> Icons.Outlined.SignalCellular4Bar
+        NetworkConnection.ETHERNET -> Icons.Outlined.NetworkCell
         null -> Icons.Filled.CloudOff
     }
 
@@ -19,6 +21,7 @@ val NetworkConnection?.message: String
     get() = when (this) {
         NetworkConnection.WIFI -> "Connected by Wifi"
         NetworkConnection.MOBILE -> "Connected by Mobile Network"
+        NetworkConnection.ETHERNET -> "Connected by Ethernet"
         null -> "No Connection"
     }
 
