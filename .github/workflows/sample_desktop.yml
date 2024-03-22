@@ -1,4 +1,4 @@
-name: Sample Android
+name: Sample Desktop
 
 on:
   push:

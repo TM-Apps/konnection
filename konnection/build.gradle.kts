@@ -28,54 +28,58 @@ tasks.jvmTest {
 kotlin {
     androidTarget {
         publishLibraryVariants("release", "debug")
-    // publishAllLibraryVariants()
+     // publishAllLibraryVariants()
+    }
+    jvm {
+        withSourcesJar(publish = true)
     }
 }
 
-val libSourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-// from(sourceSets.main.get().allSource)
+//val libSourcesJar by tasks.registering(Jar::class) {
+//    archiveClassifier.set("sources")
+// // from(sourceSets.main.get().allSource)
+//}
+
+// Workaround for gradle issue: https://youtrack.jetbrains.com/issue/KT-46466
+val signingTasks = tasks.withType<Sign>()
+tasks.withType<AbstractPublishToMaven>().configureEach {
+    dependsOn(signingTasks)
 }
 
-val libJavadocJar by tasks.registering(Jar::class) {
+val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-// from(sourceSets.main.get().allSource)
+ // from(sourceSets.main.get().allSource)
 }
 
 publishing {
-    publications {
-        withType<MavenPublication>().all {
-            pom {
-                withXml {
-                    asNode().apply {
-                        appendNode("name", project.name)
-                        appendNode("description", "A Kotlin Multiplatform library for Network Connection data.")
-                        appendNode("url", "https://github.com/TM-Apps/konnection")
-                    }
-                }
-                licenses {
-                    license {
-                        name.set("The Apache Software License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                        distribution.set("repo")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("magnumrocha")
-                        name.set("Magnum Rocha")
-                        organization.set("TMApps")
-                        organizationUrl.set("http://github.com/TM-Apps")
-                    }
-                }
-                scm {
-                    url.set("https://github.com/TM-Apps/konnection")
+    publications.withType<MavenPublication>() {
+        artifact(javadocJar.get())
+
+        pom {
+            withXml {
+                asNode().apply {
+                    appendNode("name", project.name)
+                    appendNode("description", "A Kotlin Multiplatform library for Network Connection data.")
+                    appendNode("url", "https://github.com/TM-Apps/konnection")
                 }
             }
-
-            if (name == "kotlinMultiplatform") {
-                // artifact(libSourcesJar.get()) { archiveClassifier.set("sources") }
-                artifact(libJavadocJar.get()) //{ archiveClassifier.set("javadoc") }
+            licenses {
+                license {
+                    name.set("The Apache Software License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("repo")
+                }
+            }
+            developers {
+                developer {
+                    id.set("magnumrocha")
+                    name.set("Magnum Rocha")
+                    organization.set("TMApps")
+                    organizationUrl.set("http://github.com/TM-Apps")
+                }
+            }
+            scm {
+                url.set("https://github.com/TM-Apps/konnection")
             }
         }
     }
