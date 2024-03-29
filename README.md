@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.2.0")
+    implementation("dev.tmapps:konnection:1.3.0")
 }
 ```
 
@@ -23,19 +23,19 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.2.0")
+        implementation("dev.tmapps:konnection:1.3.0")
     }
 }
 ```
 
 ## Usage
 
-### on Android or JVM
+### on Kotlin common code
 ```kotlin
-// instantiate the Konnection class with a android.content.Context
-// you can enable or disable internal library debug logging, default is false...
-// for JVM, there is an extra parameter: `connectionCheckTime = 5.seconds` to allow control the check connection check time.
-val konnection = Konnection(context, enableDebugLog = true)
+// Get a default Konnection instance or create an instance.
+-> val konnection = Konnection.instance
+-> val konnection = Konnection.createInstance(enableDebugLog = true)
+// NOTE: It is strongly recommended to work with only one Konnection instance on the App.
 
 // get the immediate connection state
 val hasNetworkConnection = konnection.isConnected()
@@ -46,41 +46,49 @@ konnection.observeHasConnection()
 // return ip info for Wifi (ipv4 and ipv6) and Mobile (host and external) connections
 val currentIpInfo = konnection.getCurrentIpInfo()
 
-// observes current NetworkConnection (WIFI, MOBILE, NONE) state.
+// observes current NetworkConnection state (WIFI, MOBILE, ETHERNET or null).
 konnection.observeConnection()
     .collect { state -> ... }
 ```
 
+### on Android
+``` kotlin
+// It's possible to create a Konnection single instance with
+// a specific `android.content.Context` instance
+val konnection = Konnection.createInstance(context, enableDebugLog = true, context)
+```
+
 ### on iOS
-
 ```kotlin
-// instantiate the Konnection class
-// you can enable or disable internal library debug logging, default is false...
-val konnection = Konnection(enableDebugLog = true)
+// Get a Konnection instance.
+val konnection = Konnection.createInstance(enableDebugLog = true)
 
-// get the immediate connection state
-val hasNetworkConnection = konnection.isConnected()
-// or observe it...
+// Create Swift friendly APIs on Kotlin iOS source code.
+
 fun hasConnectionObservation(callback: (Boolean) -> Unit) {
     konnection.observeHasConnection()
         .onEach { callback(it) }
         .launchIn(...)
 }
 
-// return ip info for Wifi (ipv4 and ipv6) and Mobile (host and external) connections
-val currentIpInfo = konnection.getCurrentIpInfo()
-
-// emits current NetworkConnection (WIFI, MOBILE, NONE) state
 fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
     konnection.observeConnection()
         .onEach { callback(it) }
         .launchIn(...)
 }
 
-// stops the publishing of connection state.
-// this is necessary to stop and clear the internal SCNetworkReachability references
+// Stops the publishing of connection state.
+// This is necessary to stop and clear the internal SCNetworkReachability references
 // and free the created pointers on native heap memory
-konnection.stop()
+Konnection.stop()
+```
+
+### on JVM
+```kotlin
+// It's possible to create a Konnection single instance with the extra parameters.
+// - `connectionCheckTime = [duration]`: allow the control of the check connection time.
+// - `pingHostCheckers`: list of hosts to ping on connection check, eg. "google.com", "apple.com", ...
+val konnection = Konnection.createInstance(connectionCheckTime = 5.seconds, pingHostCheckers = listOf("myhost.com"))
 ```
 
 ## License

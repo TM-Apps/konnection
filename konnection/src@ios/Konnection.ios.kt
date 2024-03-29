@@ -7,6 +7,7 @@ import dev.tmapps.konnection.utils.IfaddrsInteractorImpl
 import dev.tmapps.konnection.utils.ReachabilityInteractor
 import dev.tmapps.konnection.utils.ReachabilityInteractorImpl
 import dev.tmapps.konnection.utils.TriggerEvent
+import kotlin.concurrent.Volatile
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.NativePointed
@@ -53,13 +54,25 @@ import platform.posix.sockaddr
 import platform.posix.sockaddr_in
 
 @OptIn(ExperimentalForeignApi::class)
-actual class Konnection(
-    private val enableDebugLog: Boolean = false,
-    private val ipResolvers: List<IpResolver> = listOf(
-        MyExternalIpResolver(enableDebugLog),
-        IPv6TestIpResolver(enableDebugLog)
-    )
+actual class Konnection private constructor(
+    private val enableDebugLog: Boolean,
+    private val ipResolvers: List<IpResolver>
 ) {
+    actual companion object {
+        @Volatile
+        private var INSTANCE: Konnection? = null
+
+        actual val instance: Konnection
+            get() = INSTANCE ?: createInstance()
+
+        actual fun createInstance(
+            enableDebugLog: Boolean,
+            ipResolvers: List<IpResolver>
+        ): Konnection = Konnection(enableDebugLog, ipResolvers).also {
+            INSTANCE = it // require(INSTANCE == null) { "Single Instance already created!" }
+        }
+    }
+
     private val zeroAddress: NativePointed
     private val reachabilityRef: SCNetworkReachabilityRef
     private val reachabilitySerialQueue: dispatch_queue_t
@@ -176,6 +189,7 @@ actual class Konnection(
         selfPtr.dispose()
         nativeHeap.free(context)
         nativeHeap.free(zeroAddress)
+        debugLog("Konnection stopped!")
     }
 
     private fun getReachabilityFlags(): Array<SCNetworkReachabilityFlags> {

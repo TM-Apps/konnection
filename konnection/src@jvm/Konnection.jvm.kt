@@ -14,17 +14,52 @@ import java.net.NetworkInterface
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
+import kotlin.concurrent.Volatile
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-actual class Konnection(
-    private val enableDebugLog: Boolean = false,
-    private val connectionCheckTime: Duration = 3.seconds,
-    private val ipResolvers: List<IpResolver> = listOf(
-        MyExternalIpResolver(enableDebugLog),
-        IPv6TestIpResolver(enableDebugLog)
-    )
+actual class Konnection private constructor(
+    private val connectionCheckTime: Duration,
+    private val enableDebugLog: Boolean,
+    private val ipResolvers: List<IpResolver>,
+    private val pingHostCheckers: List<String>
 ) {
+    actual companion object {
+        @Volatile
+        private var INSTANCE: Konnection? = null
+
+        actual val instance: Konnection
+            get() = INSTANCE ?: createInstance()
+
+        actual fun createInstance(
+            enableDebugLog: Boolean,
+            ipResolvers: List<IpResolver>
+        ): Konnection = createInstance( // require(INSTANCE == null) { "Single Instance already created!" }
+            connectionCheckTime = 3.seconds,
+            enableDebugLog = enableDebugLog,
+            ipResolvers = ipResolvers,
+        )
+
+        fun createInstance(
+            connectionCheckTime: Duration,
+            enableDebugLog: Boolean = false,
+            ipResolvers: List<IpResolver> = listOf(
+                MyExternalIpResolver(enableDebugLog),
+                IPv6TestIpResolver(enableDebugLog)
+            ),
+            pingHostCheckers: List<String> = listOf(
+                "google.com", "amazon.com", "facebook.com", "apple.com"
+            )
+        ): Konnection = Konnection(
+            connectionCheckTime = connectionCheckTime,
+            enableDebugLog = enableDebugLog,
+            ipResolvers = ipResolvers,
+            pingHostCheckers = pingHostCheckers
+        ).also {
+            INSTANCE = it
+        }
+    }
+
     private val logger = if (enableDebugLog) Logger.getLogger("Konnection") else null
 
     private val connectionPublisher = MutableStateFlow(getCurrentNetworkConnection())
@@ -36,11 +71,9 @@ actual class Konnection(
             }, 0, connectionCheckTime.inWholeSeconds, TimeUnit.SECONDS)
     }
 
-    actual fun isConnected(): Boolean =
-        "google.com".isHostAvailable
-        || "amazon.com".isHostAvailable
-        || "facebook.com".isHostAvailable
-        || "apple.com".isHostAvailable
+    actual fun isConnected(): Boolean = pingHostCheckers.firstNotNullOfOrNull {
+        if (!it.isHostAvailable) null else true
+    } ?: false
 
     actual fun observeHasConnection(): Flow<Boolean> = connectionPublisher.map { it != null }
 

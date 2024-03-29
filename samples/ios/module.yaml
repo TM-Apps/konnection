@@ -6,5 +6,4 @@ dependencies:
 settings:
   compose: enabled
   ios:
-    deploymentTarget: 17
-    teamId: Y4NP5D9L5A
+    deploymentTarget: 14

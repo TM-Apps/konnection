@@ -12,3 +12,4 @@ settings:
   android:
     applicationId: dev.tmapps.konnection.sample.android
     namespace: dev.tmapps.konnection.sample.android
+    compileSdk: 34

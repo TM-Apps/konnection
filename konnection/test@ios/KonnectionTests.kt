@@ -33,7 +33,7 @@ class KonnectionTests {
     @Mock private val ifaddrsInteractor = mock(classOf<IfaddrsInteractor>())
 
     private val konnection by lazy {
-        Konnection(ipResolvers = listOf(externalIpResolver)).apply {
+        Konnection.createInstance(ipResolvers = listOf(externalIpResolver)).apply {
             reachabilityInteractor = this@KonnectionTests.reachabilityInteractor
             ifaddrsInteractor = this@KonnectionTests.ifaddrsInteractor
         }

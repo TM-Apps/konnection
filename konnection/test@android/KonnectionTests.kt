@@ -28,10 +28,7 @@ class KonnectionTests {
     private val externalIpResolver = mockk<IpResolver>()
 
     private val konnection by lazy {
-        Konnection(
-            context = context,
-            ipResolvers = listOf(externalIpResolver)
-        )
+        Konnection.createInstance(context, ipResolvers = listOf(externalIpResolver))
     }
 
     @Before

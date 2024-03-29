@@ -8,12 +8,13 @@ import org.junit.Assert
 import org.junit.Test
 import java.net.InetAddress
 import java.net.NetworkInterface
+import kotlin.time.Duration.Companion.seconds
 
 class KonnectionTests {
     private val externalIpResolver = mockk<IpResolver>()
 
     private val konnection by lazy {
-        Konnection(ipResolvers = listOf(externalIpResolver))
+        Konnection.createInstance(ipResolvers = listOf(externalIpResolver))
     }
 
     @Test

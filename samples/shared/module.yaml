@@ -15,5 +15,6 @@ settings:
     serialization: json
   android:
     namespace: dev.tmapps.konnection.sample
+    compileSdk: 34
   ios:
-    deploymentTarget: 17
+    deploymentTarget: 14

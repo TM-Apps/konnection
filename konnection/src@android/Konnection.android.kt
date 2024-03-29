@@ -10,6 +10,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import dev.tmapps.konnection.resolvers.IPv6TestIpResolver
+import kotlin.concurrent.Volatile
 import dev.tmapps.konnection.resolvers.MyExternalIpResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,14 +21,39 @@ import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.NetworkInterface
 
-actual class Konnection(
-    context: Context,
-    private val enableDebugLog: Boolean = false,
-    private val ipResolvers: List<IpResolver> = listOf(
-        MyExternalIpResolver(enableDebugLog),
-        IPv6TestIpResolver(enableDebugLog)
-    )
+actual class Konnection private constructor(
+    private val context: Context,
+    private val enableDebugLog: Boolean,
+    private val ipResolvers: List<IpResolver>
 ) {
+    actual companion object {
+        @Volatile
+        private var INSTANCE: Konnection? = null
+
+        actual val instance: Konnection
+            get() = INSTANCE ?: createInstance()
+
+        actual fun createInstance(
+            enableDebugLog: Boolean,
+            ipResolvers: List<IpResolver>
+        ): Konnection = createInstance( // require(INSTANCE == null) { "Single Instance already created!" }
+            context = KonnectionConfig.getInstance().context,
+            enableDebugLog = enableDebugLog,
+            ipResolvers = ipResolvers
+        )
+
+        fun createInstance(
+            context: Context,
+            enableDebugLog: Boolean = false,
+            ipResolvers: List<IpResolver> = listOf(
+                MyExternalIpResolver(enableDebugLog),
+                IPv6TestIpResolver(enableDebugLog)
+            )
+        ): Konnection = Konnection(context, enableDebugLog, ipResolvers).also {
+            INSTANCE = it
+        }
+    }
+
     @VisibleForTesting
     internal var connectivityManager: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

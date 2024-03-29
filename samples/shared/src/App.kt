@@ -14,6 +14,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,13 +28,10 @@ import dev.tmapps.konnection.Konnection
 import dev.tmapps.konnection.sample.theme.SampleTheme
 
 @Composable
-internal expect fun getKonnection(enableDebugLog: Boolean): Konnection
-
-@Composable
 fun App(
     enableDebugLog: Boolean = false
 ) {
-    val konnection = getKonnection(enableDebugLog)
+    val konnection by remember { mutableStateOf(Konnection.createInstance(enableDebugLog)) }
     val networkState = konnection.observeNetworkConnection().collectAsState(null)
 
     val ipInfo = produceState<IpInfo?>(null, networkState.value) { value = konnection.getCurrentIpInfo() }
