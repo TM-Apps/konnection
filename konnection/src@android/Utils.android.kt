@@ -21,6 +21,7 @@ internal class KonnectionConfigInitializer : Initializer<KonnectionConfig> {
 
 internal class KonnectionConfig(val context: Context) {
     companion object {
+        @Suppress("StaticFieldLeak")
         @Volatile
         private var INSTANCE : KonnectionConfig? = null
 

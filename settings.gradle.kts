@@ -1,12 +1,11 @@
 rootProject.name = "konnection-amper"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+//enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        mavenCentral()
         google()
         gradlePluginPortal()
-        mavenCentral()
 
         // Amper repositories
         maven("https://maven.pkg.jetbrains.space/public/p/amper/amper")
@@ -19,10 +18,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
 plugins {
-    id("org.jetbrains.amper.settings.plugin").version("0.2.2")
+    id("org.jetbrains.amper.settings.plugin").version("0.3.0")
 }

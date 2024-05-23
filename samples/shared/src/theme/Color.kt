@@ -1,10 +1,11 @@
 package dev.tmapps.konnection.sample.theme
 
-import androidx.compose.material.Colors
-import androidx.compose.material.Surface
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import kotlin.math.ln
 
@@ -19,15 +20,16 @@ val grayDarkPrimary = Color(0xff4f5b66)
  * given [alpha]. Useful for situations where semi-transparent colors are undesirable.
  */
 @Composable
-fun Colors.compositedOnSurface(alpha: Float): Color {
+fun ColorScheme.compositedOnSurface(alpha: Float): Color {
     return onSurface.copy(alpha = alpha).compositeOver(surface)
 }
 
 /**
  * Elevation overlay logic copied from [Surface] — https://issuetracker.google.com/155181601
  */
-fun Colors.elevatedSurface(elevation: Dp): Color {
-    if (isLight) return surface
+@Composable
+fun ColorScheme.elevatedSurface(elevation: Dp): Color {
+    if (this.background.luminance() > 0.5) return surface
     val foreground = calculateForeground(elevation)
     return foreground.compositeOver(surface)
 }

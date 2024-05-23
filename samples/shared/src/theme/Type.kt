@@ -1,6 +1,6 @@
 package dev.tmapps.konnection.sample.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -15,105 +15,113 @@ private val fonts = fontFamily(
 )
 */
 val typography = typographyFromDefaults(
-    h1 = TextStyle(
+    displayLarge = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Bold,
         color = Color.White
     ),
-    h2 = TextStyle(
+    displayMedium = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Bold,
         color = Color.White
     ),
-    h3 = TextStyle(
+    displaySmall = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Bold,
         color = Color.White
     ),
-    h4 = TextStyle(
+    headlineLarge = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Bold,
         lineHeight = 40.sp,
         color = Color.White
     ),
-    h5 = TextStyle(
+    headlineMedium = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Bold,
         color = Color.White
     ),
-    h6 = TextStyle(
+    headlineSmall = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.W500,
         lineHeight = 28.sp,
         color = Color.White
     ),
-    subtitle1 = TextStyle(
+    titleLarge = TextStyle(
+     // fontFamily = fonts,
+        fontWeight = FontWeight.W500,
+        lineHeight = 25.sp,
+        color = Color.White
+    ),
+    titleMedium = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.W500,
         lineHeight = 22.sp,
         color = Color.White
     ),
-    subtitle2 = TextStyle(
+    titleSmall = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.W500,
         color = Color.White
     ),
-    body1 = TextStyle(
+    bodyLarge = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Normal,
         lineHeight = 28.sp,
         color = Color.White
     ),
-    body2 = TextStyle(
+    bodyMedium = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Normal,
         lineHeight = 16.sp,
         color = Color.White
     ),
-    button = TextStyle(
+    bodySmall = TextStyle(
+     // fontFamily = fonts,
+        color = Color.White
+    ),
+    labelLarge = TextStyle(
      // fontFamily = fonts,
         fontWeight = FontWeight.Bold,
         color = Color.White
     ),
-    caption = TextStyle(
-     // fontFamily = fonts,
-        color = Color.White
-    ),
-    overline = TextStyle(
+    labelSmall = TextStyle(
         letterSpacing = 0.08.em,
         color = Color.White
     )
 )
 
 private fun typographyFromDefaults(
-    h1: TextStyle?,
-    h2: TextStyle?,
-    h3: TextStyle?,
-    h4: TextStyle?,
-    h5: TextStyle?,
-    h6: TextStyle?,
-    subtitle1: TextStyle?,
-    subtitle2: TextStyle?,
-    body1: TextStyle?,
-    body2: TextStyle?,
-    button: TextStyle?,
-    caption: TextStyle?,
-    overline: TextStyle?
+    displayLarge: TextStyle?,
+    displayMedium: TextStyle?,
+    displaySmall: TextStyle?,
+    headlineLarge: TextStyle?,
+    headlineMedium: TextStyle?,
+    headlineSmall: TextStyle?,
+    titleLarge: TextStyle?,
+    titleMedium: TextStyle?,
+    titleSmall: TextStyle?,
+    bodyLarge: TextStyle?,
+    bodyMedium: TextStyle?,
+    bodySmall: TextStyle?,
+    labelLarge: TextStyle?,
+    labelSmall: TextStyle?
 ): Typography {
     val defaults = Typography()
     return Typography(
-        h1 = defaults.h1.merge(h1),
-        h2 = defaults.h2.merge(h2),
-        h3 = defaults.h3.merge(h3),
-        h4 = defaults.h4.merge(h4),
-        h5 = defaults.h5.merge(h5),
-        h6 = defaults.h6.merge(h6),
-        subtitle1 = defaults.subtitle1.merge(subtitle1),
-        subtitle2 = defaults.subtitle2.merge(subtitle2),
-        body1 = defaults.body1.merge(body1),
-        body2 = defaults.body2.merge(body2),
-        button = defaults.button.merge(button),
-        caption = defaults.caption.merge(caption),
-        overline = defaults.overline.merge(overline)
+        displayLarge = defaults.displayLarge.merge(displayLarge),
+        displayMedium = defaults.displayMedium.merge(displayMedium),
+        displaySmall = defaults.displaySmall.merge(displaySmall),
+        headlineLarge = defaults.headlineLarge.merge(headlineLarge),
+        headlineMedium = defaults.headlineMedium.merge(headlineMedium),
+        headlineSmall = defaults.headlineSmall.merge(headlineSmall),
+        titleLarge = defaults.titleMedium.merge(titleLarge),
+        titleMedium = defaults.titleMedium.merge(titleMedium),
+        titleSmall = defaults.titleSmall.merge(titleSmall),
+        bodyLarge = defaults.bodyLarge.merge(bodyLarge),
+        bodyMedium = defaults.bodyMedium.merge(bodyMedium),
+        bodySmall = defaults.bodySmall.merge(bodySmall),
+        labelLarge = defaults.labelLarge.merge(labelLarge),
+        labelSmall = defaults.labelSmall.merge(labelSmall)
     )
 }

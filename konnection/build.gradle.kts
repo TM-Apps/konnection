@@ -1,18 +1,22 @@
 plugins {
     kotlin("multiplatform")
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("com.google.devtools.ksp") version "2.0.0-RC3-1.0.20"
     id("maven-publish")
     id("signing")
 }
 
 group = "dev.tmapps"
-version = "1.3.0"
+version = "1.3.1"
+
+ksp {
+    arg("io.mockative:mockative:opt-in:dev.tmapps.konnection.utils.ReachabilityInteractor", "kotlinx.cinterop.ExperimentalForeignApi")
+}
 
 dependencies {
     configurations
         .filter { it.name.startsWith("ksp") && it.name.contains("Test") }
         .forEach {
-            add(it.name, "io.mockative:mockative-processor:2.0.1")
+            add(it.name, libs.mockative.processor)
         }
 }
 
@@ -52,7 +56,7 @@ val javadocJar by tasks.registering(Jar::class) {
 }
 
 publishing {
-    publications.withType<MavenPublication>() {
+    publications.withType<MavenPublication> {
         artifact(javadocJar.get())
 
         pom {

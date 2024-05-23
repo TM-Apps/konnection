@@ -8,7 +8,6 @@ import org.junit.Assert
 import org.junit.Test
 import java.net.InetAddress
 import java.net.NetworkInterface
-import kotlin.time.Duration.Companion.seconds
 
 class KonnectionTests {
     private val externalIpResolver = mockk<IpResolver>()

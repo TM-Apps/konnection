@@ -2,8 +2,6 @@ product: android/app
 
 dependencies:
   - ../shared
-  - $compose.foundation
-  - $compose.material3
   - $compose.preview
   - $libs.androidx.activity.compose
 

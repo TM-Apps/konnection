@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.3.0")
+    implementation("dev.tmapps:konnection:1.3.1")
 }
 ```
 
@@ -23,7 +23,7 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.3.0")
+        implementation("dev.tmapps:konnection:1.3.1")
     }
 }
 ```
@@ -85,7 +85,7 @@ Konnection.stop()
 
 ### on JVM
 ```kotlin
-// It's possible to create a Konnection single instance with the extra parameters.
+// It's possible to create a Konnection single instance with some extra parameters.
 // - `connectionCheckTime = [duration]`: allow the control of the check connection time.
 // - `pingHostCheckers`: list of hosts to ping on connection check, eg. "google.com", "apple.com", ...
 val konnection = Konnection.createInstance(connectionCheckTime = 5.seconds, pingHostCheckers = listOf("myhost.com"))

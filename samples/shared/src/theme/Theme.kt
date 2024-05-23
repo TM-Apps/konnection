@@ -1,13 +1,13 @@
 package dev.tmapps.konnection.sample.theme
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-private val ThemeColors = darkColors(
+private val ThemeColors = darkColorScheme(
     primary = Color.White,
     secondary = gray700,
     background = grayDarkPrimary,
@@ -24,7 +24,7 @@ fun SampleTheme(
         LocalElevations provides ThemeElevation
     ) {
         MaterialTheme(
-            colors = ThemeColors,
+            colorScheme = ThemeColors,
             typography = typography,
          // shapes = shapes,
             content = content
