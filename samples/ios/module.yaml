@@ -7,4 +7,4 @@ settings:
   compose: enabled
   ios:
     deploymentTarget: 14
-    teamId: Y4NP5D9L5A
+
