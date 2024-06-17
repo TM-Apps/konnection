@@ -1,15 +1,17 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+
 plugins {
     kotlin("multiplatform")
-    id("com.google.devtools.ksp") version "2.0.0-RC3-1.0.20"
+    id("com.google.devtools.ksp") version "2.0.0-1.0.22"
     id("maven-publish")
     id("signing")
 }
 
 group = "dev.tmapps"
-version = "1.3.1"
+version = "1.4.0"
 
 ksp {
-    arg("io.mockative:mockative:opt-in:dev.tmapps.konnection.utils.ReachabilityInteractor", "kotlinx.cinterop.ExperimentalForeignApi")
+    arg("io.mockative:mockative:opt-in:dev.tmapps.konnection.utils.SCNetworkReachabilityInteractor", "kotlinx.cinterop.ExperimentalForeignApi")
 }
 
 dependencies {
@@ -36,6 +38,24 @@ kotlin {
     }
     jvm {
         withSourcesJar(publish = true)
+    }
+
+    // Swift Package configs
+    val xcframeworkName = "Konnection"
+    val xcf = XCFramework(xcframeworkName)
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach {
+        it.binaries.framework {
+            baseName = xcframeworkName
+            // Specify CFBundleIdentifier to uniquely identify the framework
+            binaryOption("bundleId", "${group}.${xcframeworkName}")
+            xcf.add(this)
+            isStatic = true
+        }
     }
 }
 

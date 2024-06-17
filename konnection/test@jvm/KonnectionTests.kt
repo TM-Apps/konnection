@@ -1,5 +1,6 @@
 package dev.tmapps.konnection
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -95,7 +96,10 @@ class KonnectionTests {
         mockkStatic(NetworkInterface::class)
         every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
-        Assert.assertEquals(IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6), konnection.getCurrentIpInfo())
+        val externalIpV4 = "192.192.192.192"
+        coEvery { externalIpResolver.get() } returns externalIpV4
+
+        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.WIFI, ipv4 = ipv4, ipv6 = ipv6, externalIpV4 = externalIpV4), konnection.getInfo())
     }
 
     @Test
@@ -120,6 +124,8 @@ class KonnectionTests {
         mockkStatic(NetworkInterface::class)
         every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
-        Assert.assertEquals(IpInfo.EthernetIpInfo(ipv4 = ipv4, ipv6 = ipv6), konnection.getCurrentIpInfo())
+        coEvery { externalIpResolver.get() } returns null
+
+        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.ETHERNET, ipv4 = ipv4, ipv6 = ipv6), konnection.getInfo())
     }
 }

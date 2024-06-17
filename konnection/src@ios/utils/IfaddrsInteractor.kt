@@ -10,7 +10,6 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
-import platform.Foundation.NSLog
 import platform.darwin.getifaddrs
 import platform.darwin.ifaddrs
 import platform.posix.NI_MAXHOST
@@ -19,15 +18,17 @@ import platform.posix.getnameinfo
 import platform.posix.sockaddr
 
 internal interface IfaddrsInteractor {
-    fun get(netInterface: String, saFamily: Int): String?
+    fun get(netInterfaces: Set<String>, saFamily: Int): String?
 }
 
 @OptIn(ExperimentalForeignApi::class)
 internal class IfaddrsInteractorImpl(
-    private val enableDebugLog: Boolean = false
+    private val logger: (String, Throwable?) -> Unit
 ) : IfaddrsInteractor {
 
-    override fun get(netInterface: String, saFamily: Int): String? = memScoped {
+    private fun debugLog(message: String, error: Throwable? = null) = ::logger
+
+    override fun get(netInterfaces: Set<String>, saFamily: Int): String? = memScoped {
         val ifaddr = alloc<ifaddrs>()
         if (getifaddrs(ifaddr.ptr.reinterpret()) == 0) {
             var addr = ifaddr.ifa_next?.reinterpret<ifaddrs>()
@@ -38,7 +39,7 @@ internal class IfaddrsInteractorImpl(
 
                 if (currentSaFamily?.toInt() == saFamily) {
                     val ifaName = addr.pointed.ifa_name?.reinterpret<ByteVar>()?.toKString() ?: return@memScoped null
-                    if (ifaName == netInterface) {
+                    if (netInterfaces.contains(ifaName)) {
                         val saLen = socketAddr.pointed.sa_len
                         val hostname = allocArray<ByteVar>(length = NI_MAXHOST)
                         getnameinfo(socketAddr, saLen.toUInt(), hostname, NI_MAXHOST.toUInt(), null, 0u, NI_NUMERICHOST)
@@ -51,11 +52,5 @@ internal class IfaddrsInteractorImpl(
             }
         }
         return null
-    }
-
-    private fun debugLog(message: String) {
-        if (enableDebugLog) {
-            NSLog("IfaddrsInteractor -> $message")
-        }
     }
 }

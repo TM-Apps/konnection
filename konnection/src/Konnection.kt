@@ -40,30 +40,24 @@ expect class Konnection {
     fun observeNetworkConnection(): Flow<NetworkConnection?>
 
     /** Returns the ip info from the current Network Connection. */
-    suspend fun getCurrentIpInfo(): IpInfo?
+    suspend fun getInfo(): ConnectionInfo?
 }
 
 enum class NetworkConnection {
-    WIFI, MOBILE, ETHERNET
+    WIFI,
+    MOBILE,
+    ETHERNET,
+    BLUETOOTH_TETHERING,
+    UNKNOWN_CONNECTION_TYPE
 }
 
-/** The ip info data */
-sealed class IpInfo(val connection: NetworkConnection) {
-    data class WifiIpInfo(
-        val ipv4: String?,
-        val ipv6: String?
-    ): IpInfo(connection = NetworkConnection.WIFI)
-
-    data class MobileIpInfo(
-        val hostIpv4: String?,
-        val externalIpV4: String?
-    ): IpInfo(connection = NetworkConnection.MOBILE)
-
-    data class EthernetIpInfo(
-        val ipv4: String?,
-        val ipv6: String?
-    ): IpInfo(connection = NetworkConnection.ETHERNET)
-}
+/** The connection info */
+data class ConnectionInfo(
+    val connection: NetworkConnection,
+    val ipv4: String? = null,
+    val ipv6: String? = null,
+    val externalIpV4: String? = null
+)
 
 /** IP resolver contract */
 interface IpResolver {

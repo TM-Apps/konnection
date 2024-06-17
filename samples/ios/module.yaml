@@ -7,4 +7,3 @@ settings:
   compose: enabled
   ios:
     deploymentTarget: 14
-

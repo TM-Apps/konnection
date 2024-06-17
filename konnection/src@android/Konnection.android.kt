@@ -10,7 +10,6 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import dev.tmapps.konnection.resolvers.IPv6TestIpResolver
-import kotlin.concurrent.Volatile
 import dev.tmapps.konnection.resolvers.MyExternalIpResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +19,7 @@ import kotlinx.coroutines.withContext
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.NetworkInterface
+import kotlin.concurrent.Volatile
 
 actual class Konnection private constructor(
     private val context: Context,
@@ -103,43 +103,8 @@ actual class Konnection private constructor(
 
     actual fun observeNetworkConnection(): Flow<NetworkConnection?> = connectionPublisher
 
-    actual suspend fun getCurrentIpInfo(): IpInfo? = getIpInfo(getCurrentNetworkConnection())
-
-    private fun getNetworkConnection(network: Network): NetworkConnection? {
-        val capabilities = connectivityManager.getNetworkCapabilities(network)
-        return getNetworkConnection(capabilities)
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun postAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection? {
-        val network = connectivityManager.activeNetwork
-        val capabilities = connectivityManager.getNetworkCapabilities(network)
-        return getNetworkConnection(capabilities)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun preAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection? =
-        when (connectivityManager.activeNetworkInfo?.type) {
-            null -> null
-            ConnectivityManager.TYPE_WIFI -> NetworkConnection.WIFI
-            else -> NetworkConnection.MOBILE
-        }
-
-    private fun getNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
-        when {
-            capabilities == null -> null
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.M
-                && !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> null
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                !(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) -> null
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkConnection.MOBILE
-            else -> null
-        }
-
-    private suspend fun getIpInfo(networkConnection: NetworkConnection?): IpInfo? = withContext(Dispatchers.IO) {
-        if (networkConnection == null) return@withContext null
+    actual suspend fun getInfo(): ConnectionInfo? = withContext(Dispatchers.IO) {
+        val networkConnection = getCurrentNetworkConnection() ?: return@withContext null
         try {
             var ipv4: String? = null
             var ipv6: String? = null
@@ -159,16 +124,55 @@ actual class Konnection private constructor(
                 }
             }
 
-            return@withContext when (networkConnection) {
-                NetworkConnection.WIFI -> IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6)
-                NetworkConnection.MOBILE -> IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = getExternalIp())
-                NetworkConnection.ETHERNET -> IpInfo.EthernetIpInfo(ipv4 = ipv4, ipv6 = ipv6)
-            }
+            return@withContext ConnectionInfo(
+                connection = networkConnection,
+                ipv4 = ipv4,
+                ipv6 = ipv6,
+                externalIpV4 = getExternalIp()
+            )
         } catch (ex: Exception) {
             debugLog("getIpInfo networkConnection = $networkConnection", ex)
             return@withContext null
         }
     }
+
+    private fun getNetworkConnection(network: Network): NetworkConnection? {
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return getNetworkConnection(capabilities)
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun postAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection? {
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return getNetworkConnection(capabilities)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun preAndroidMNetworkConnection(connectivityManager: ConnectivityManager): NetworkConnection? =
+        when (connectivityManager.activeNetworkInfo?.type) {
+            null -> null
+            ConnectivityManager.TYPE_WIFI -> NetworkConnection.WIFI
+            ConnectivityManager.TYPE_BLUETOOTH -> NetworkConnection.BLUETOOTH_TETHERING
+            ConnectivityManager.TYPE_MOBILE -> NetworkConnection.MOBILE
+            ConnectivityManager.TYPE_ETHERNET -> NetworkConnection.ETHERNET
+            else -> NetworkConnection.UNKNOWN_CONNECTION_TYPE
+        }
+
+    private fun getNetworkConnection(capabilities: NetworkCapabilities?): NetworkConnection? =
+        when {
+            capabilities == null -> null
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                && !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> null
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                !(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) -> null
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkConnection.WIFI
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> NetworkConnection.BLUETOOTH_TETHERING
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkConnection.MOBILE
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> NetworkConnection.ETHERNET
+            else -> NetworkConnection.UNKNOWN_CONNECTION_TYPE
+        }
 
     private suspend fun getExternalIp(): String? = withContext(Dispatchers.IO) {
         ipResolvers.firstNotNullOfOrNull { it.get() }

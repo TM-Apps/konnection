@@ -103,8 +103,9 @@ class KonnectionTests {
         val capabilities = mockk<NetworkCapabilities>()
 
         every { capabilities.hasCapability(any()) } returns true
-        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns false
         every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns true
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) } returns false
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns false
         every { connectivityManager.getNetworkCapabilities(network) } returns capabilities
         every { connectivityManager.activeNetwork } returns network
 
@@ -131,8 +132,9 @@ class KonnectionTests {
         val capabilities = mockk<NetworkCapabilities>()
 
         every { capabilities.hasCapability(any()) } returns true
-        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns true
         every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns false
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) } returns false
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns true
         every { connectivityManager.getNetworkCapabilities(network) } returns capabilities
         every { connectivityManager.activeNetwork } returns network
 
@@ -145,8 +147,9 @@ class KonnectionTests {
         val capabilities = mockk<NetworkCapabilities>()
 
         every { capabilities.hasCapability(any()) } returns true
-        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns false
         every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns true
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) } returns false
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns false
         every { connectivityManager.getNetworkCapabilities(network) } returns capabilities
         every { connectivityManager.activeNetwork } returns network
 
@@ -167,7 +170,9 @@ class KonnectionTests {
         mockkStatic(NetworkInterface::class)
         every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
-        Assert.assertEquals(IpInfo.WifiIpInfo(ipv4 = ipv4, ipv6 = ipv6), konnection.getCurrentIpInfo())
+        coEvery { externalIpResolver.get() } returns null
+
+        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.WIFI, ipv4 = ipv4, ipv6 = ipv6), konnection.getInfo())
     }
 
     @Test @Suppress("DEPRECATION")
@@ -176,8 +181,9 @@ class KonnectionTests {
         val capabilities = mockk<NetworkCapabilities>()
 
         every { capabilities.hasCapability(any()) } returns true
-        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns true
         every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns false
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) } returns false
+        every { capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns true
         every { connectivityManager.getNetworkCapabilities(network) } returns capabilities
         every { connectivityManager.activeNetwork } returns network
 
@@ -199,7 +205,7 @@ class KonnectionTests {
         val externalIpV4 = "192.192.192.192"
         coEvery { externalIpResolver.get() } returns externalIpV4
 
-        Assert.assertEquals(IpInfo.MobileIpInfo(hostIpv4 = ipv4, externalIpV4 = externalIpV4), konnection.getCurrentIpInfo())
+        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.MOBILE, ipv4 = ipv4, externalIpV4 = externalIpV4), konnection.getInfo())
     }
 
     private fun setAndroidVersion(version: Int) {

@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.tmapps.konnection.IpInfo
+import dev.tmapps.konnection.ConnectionInfo
 import dev.tmapps.konnection.Konnection
 import dev.tmapps.konnection.sample.theme.SampleTheme
 
@@ -34,7 +34,7 @@ fun App(
     val konnection by remember { mutableStateOf(Konnection.createInstance(enableDebugLog)) }
     val networkState = konnection.observeNetworkConnection().collectAsState(null)
 
-    val ipInfo = produceState<IpInfo?>(null, networkState.value) { value = konnection.getCurrentIpInfo() }
+    val ipInfo = produceState<ConnectionInfo?>(null, networkState.value) { value = konnection.getInfo() }
 
     SampleTheme {
         Surface(
@@ -63,20 +63,28 @@ fun App(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text(
-                    text = ipInfo.value?.ipInfo1 ?: "",
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = ipInfo.value?.ipInfo2 ?: "",
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
-                )
+                ipInfo(ipInfo.value?.ipV4Info)
+                ipInfo(ipInfo.value?.ipV6Info, addPadding = true)
+                ipInfo(ipInfo.value?.externalIpV4Info, addPadding = true)
             }
         }
     }
+}
+
+@Composable
+fun ipInfo(
+    ipInfo: String?,
+    addPadding: Boolean = false
+) {
+    if (ipInfo == null) return
+
+    if (addPadding) {
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    Text(
+        text = ipInfo,
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center
+    )
 }

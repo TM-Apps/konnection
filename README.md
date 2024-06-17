@@ -4,6 +4,8 @@ A Kotlin Multiplatform Mobile library to emit Network Connection status.
 
 ![Sample Android](art/sample_android.gif) ![Sample iOS](art/sample_ios.gif)
 
+![Sample Desktop](art/sample_desktop.png)
+
 ## Add to your project
 
 ### build.gradle.kts
@@ -13,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.3.1")
+    implementation("dev.tmapps:konnection:1.4.0")
 }
 ```
 
@@ -23,7 +25,7 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.3.1")
+        implementation("dev.tmapps:konnection:1.4.0")
     }
 }
 ```
@@ -82,26 +84,25 @@ Get or create a Konnection instance as explained at [on Kotlin common code](#on-
 Create Swift friendly APIs on Kotlin iOS source code.
 ```kotlin
 fun hasConnectionObservation(callback: (Boolean) -> Unit) {
-    konnection.observeHasConnection()
+    Konnection.instance.observeHasConnection()
         .onEach { callback(it) }
         .launchIn(...)
 }
 
 fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
-    konnection.observeConnection()
+    Konnection.instance.observeConnection()
         .onEach { callback(it) }
         .launchIn(...)
 }
 
-Konnection.stop()
+fun stopKonnection() = Konnection.instance.stop()
+
 ```
 
-> **NOTE**: Stop the publishing of connection state.
+To stop the publishing of connection state, it's necessary to stop the Konnection instance before the Application terminate.
+<br/>Call the `stopKonnection` function on the `applicationWillTerminate` of your AppDelegate.
 
-This is necessary to stop and clear the internal SCNetworkReachability references and free the created pointers on native heap memory.
-```kotlin
-konnection.stop()
-```
+The Konnection stop will also clear the internal library reference and free the created pointers on native heap memory.
 
 ### on JVM
 It's possible to create a Konnection single instance with some extra parameters.
@@ -114,6 +115,20 @@ val konnection = Konnection.createInstance(
     ...
 )
 ```
+
+### Connection Type by Platforms
+
+The following table defines the possible values per supported platform:
+
+| Connection Type     | Android  | iOS      | JVM |
+|---------------------|:--------:|:--------:|:---:|
+| Wifi                | ✅       | ✅       | ✅   |
+| Mobile              | ✅       | ✅       | ❌   |
+| Ethernet            | ✅       | ✅       | ✅   |
+| Bluetooth Tethering | ✅       | ❌       | ❌   |
+| Unknown             | ✅       | ✅       | ❌   |
+
+> **Unknown** type means there is some internet connection detected but the type is unknown.
 
 ## License
 
