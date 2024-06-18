@@ -1,5 +1,6 @@
 *.iml
 .gradle
+**/.build/
 **/build/
 xcuserdata
 !src/**/build/
@@ -18,3 +19,4 @@ captures
 build
 .fleet/scratches
 .fleet/run.json
+**/.kotlin/

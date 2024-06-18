@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.4.0")
+    implementation("dev.tmapps:konnection:1.4.1")
 }
 ```
 
@@ -25,7 +25,7 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.4.0")
+        implementation("dev.tmapps:konnection:1.4.1")
     }
 }
 ```
@@ -89,8 +89,8 @@ fun hasConnectionObservation(callback: (Boolean) -> Unit) {
         .launchIn(...)
 }
 
-fun networkConnectionObservation(callback: (NetworkConnection) -> Unit) {
-    Konnection.instance.observeConnection()
+fun networkConnectionObservation(callback: (NetworkConnection?) -> Unit) {
+    Konnection.instance.observeNetworkConnection()
         .onEach { callback(it) }
         .launchIn(...)
 }
