@@ -8,9 +8,7 @@ on:
   pull_request:
     branches: [ master ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
     runs-on: macOS-latest
@@ -32,17 +30,82 @@ jobs:
     #- name: Select Xcode
     #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
 
+    - name: xcode version
+      run: /usr/bin/xcodebuild -version
+
+    - name: build library
+      run: ./gradlew konnection:build
+
+    - name: assemble xcFramework
+      run: ./gradlew konnection-swift:assembleKonnectionReleaseXCFramework
+
+    - name: upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        path: ./
+
+  sample-android:
+    runs-on: macOS-latest
+    needs: build
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+
+    - name: setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'adopt'
+        java-version: 17
+
+    - name: enter on artifact
+      run: cd artifact
+
+    - name: build sample app
+      run: ./gradlew samples:android:build
+
+  sample-ios:
+    runs-on: macOS-latest
+    needs: build
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+
+    - name: setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'adopt'
+        java-version: 17
+
+    #- name: Select Xcode
+    #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
+
     - name: Xcode version
       run: /usr/bin/xcodebuild -version
 
-    - name: build
-      run: ./gradlew konnection:build
+    - name: enter on artifact
+      run: cd artifact
 
-    - name: publish
-      env:
-        SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
-        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-        SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
-        SIGN_KEY_PASSPHRASE: ${{ secrets.SIGN_KEY_PASSPHRASE }}
-        SIGN_KEY_PRIVATE: ${{ secrets.SIGN_KEY_PRIVATE }}
-      run: ./gradlew konnection:publish
+    - name: build sample app
+      run: ./gradlew samples:ios:build
+
+  sample-desktop:
+    runs-on: macOS-latest
+    needs: build
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+
+    - name: setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'adopt'
+        java-version: 17
+
+    - name: enter on artifact
+      run: cd artifact
+
+    - name: build sample app
+      run: ./gradlew samples:desktop:build
