@@ -130,6 +130,40 @@ The following table defines the possible values per supported platform:
 
 > **Unknown** type means there is some internet connection detected but the type is unknown.
 
+### iOS Swift Package
+
+You can use the Konnection as a Swift Package on your iOS App.
+
+```swift
+import Konnection
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions...) -> Bool {
+        Konnection.shared.start()
+        return true
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        Konnection.shared.stop()
+    }
+}
+
+...
+VStack {
+    ...
+}
+.onAppear {
+    Konnection.shared.observeNetworkConnection().collect { connection in
+        print("Current Connection : \(connection)")
+    } onCompletion: { throwable in
+        print("Complete : \(throwable?.description() ?? "<Success>")")
+    }
+}
+```
+
+If want to see more, check out the `ios-spm` sample on [samples](./samples) folder.
+
 ## License
 
     Copyright 2021 TMApps
