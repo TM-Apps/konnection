@@ -68,9 +68,6 @@ jobs:
         distribution: 'adopt'
         java-version: 17
 
-    - name: Enter on Artifact
-      run: cd artifact
-
     - name: Build Sample App
       run: ./gradlew samples:android:build
 
@@ -81,6 +78,15 @@ jobs:
     steps:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
+      with:
+        name: repository
+        path: ${{ github.workspace }}
+
+    - name: Validate Artifacts
+      run: |
+        ls -al ${{ github.workspace }}
+        chmod -R 777 ${{ github.workspace }}
+        ls -al ${{ github.workspace }}
 
     - name: Setup JDK
       uses: actions/setup-java@v4
@@ -94,9 +100,6 @@ jobs:
     - name: Xcode Version
       run: /usr/bin/xcodebuild -version
 
-    - name: Enter on Artifact
-      run: cd artifact
-
     - name: Build Sample App
       run: ./gradlew samples:ios:build
 
@@ -107,15 +110,21 @@ jobs:
     steps:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
+      with:
+        name: repository
+        path: ${{ github.workspace }}
+
+    - name: Validate Artifacts
+      run: |
+        ls -al ${{ github.workspace }}
+        chmod -R 777 ${{ github.workspace }}
+        ls -al ${{ github.workspace }}
 
     - name: Setup JDK
       uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
         java-version: 17
-
-    - name: Enter on Artifact
-      run: cd artifact
 
     - name: Build Sample App
       run: ./gradlew samples:desktop:build
