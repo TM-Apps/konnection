@@ -27,17 +27,8 @@ jobs:
         distribution: 'adopt'
         java-version: 17
 
-    #- name: Select Xcode
-    #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
-
-    - name: Xcode Version
-      run: /usr/bin/xcodebuild -version
-
     - name: Build Library
       run: ./gradlew konnection:build
-
-    - name: Assemble XCFramework
-      run: ./gradlew konnection-swift:assembleKonnectionReleaseXCFramework
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
@@ -146,24 +137,28 @@ jobs:
         chmod -R 777 ${{ github.workspace }}
         ls -al ${{ github.workspace }}
 
+    #- name: Select Xcode
+    #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
+
     - name: Setup JDK
       uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
         java-version: 17
 
-    #- name: Select Xcode
-    #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
-
     - name: Xcode Version
       run: xcodebuild -version
 
+    - name: Assemble XCFramework
+      run: ./gradlew konnection-swift:assembleKonnectionReleaseXCFramework
+
     - name: Build Sample App
       run: |
+        set -o pipefail
         xcodebuild -project samples/ios-spm/Konnection-SPM-Sample.xcodeproj \
+          -sdk iphonesimulator \
           -destination generic/platform=iOS \
-          -configuration "Debug" build \
-          CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+         clean build | xcpretty -c
 
   publish:
     runs-on: macOS-latest

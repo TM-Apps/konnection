@@ -7,31 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D0753412C24934E00FC0592 /* Konnection.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D07533F2C24933700FC0592 /* Konnection.xcframework */; };
+		1D0753422C24934E00FC0592 /* Konnection.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1D07533F2C24933700FC0592 /* Konnection.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1DAE9EE22C202C670028E2DC /* Konnection_SPM_SampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DAE9EE12C202C670028E2DC /* Konnection_SPM_SampleApp.swift */; };
 		1DAE9EE42C202C670028E2DC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DAE9EE32C202C670028E2DC /* ContentView.swift */; };
 		1DAE9EE62C202C6A0028E2DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DAE9EE52C202C6A0028E2DC /* Assets.xcassets */; };
 		1DAE9EEA2C202C6A0028E2DC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DAE9EE92C202C6A0028E2DC /* Preview Assets.xcassets */; };
-		1DCADCFC2C2336E800ADC909 /* Konnection in Frameworks */ = {isa = PBXBuildFile; productRef = 1DCADCFB2C2336E800ADC909 /* Konnection */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		1DAE9EF02C202C6A0028E2DC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1DAE9ED62C202C670028E2DC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1DAE9EDD2C202C670028E2DC;
-			remoteInfo = "Konnection-SPM-Sample";
+/* Begin PBXCopyFilesBuildPhase section */
+		1D0753432C24934E00FC0592 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1D0753422C24934E00FC0592 /* Konnection.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1DAE9EFA2C202C6A0028E2DC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1DAE9ED62C202C670028E2DC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1DAE9EDD2C202C670028E2DC;
-			remoteInfo = "Konnection-SPM-Sample";
-		};
-/* End PBXContainerItemProxy section */
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1D07533F2C24933700FC0592 /* Konnection.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = Konnection.xcframework; sourceTree = "<group>"; };
 		1D78E7CF2C221B3000A40DAF /* Konnection.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Konnection.xcframework; path = "../../konnection-swift/build/XCFrameworks/release/Konnection.xcframework"; sourceTree = "<group>"; };
 		1DAE9EDE2C202C670028E2DC /* Konnection-SPM-Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Konnection-SPM-Sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DAE9EE12C202C670028E2DC /* Konnection_SPM_SampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Konnection_SPM_SampleApp.swift; sourceTree = "<group>"; };
@@ -39,8 +38,6 @@
 		1DAE9EE52C202C6A0028E2DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1DAE9EE72C202C6A0028E2DC /* Konnection_SPM_Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Konnection_SPM_Sample.entitlements; sourceTree = "<group>"; };
 		1DAE9EE92C202C6A0028E2DC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		1DAE9EEF2C202C6A0028E2DC /* Konnection-SPM-SampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Konnection-SPM-SampleTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1DAE9EF92C202C6A0028E2DC /* Konnection-SPM-SampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Konnection-SPM-SampleUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,27 +45,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DCADCFC2C2336E800ADC909 /* Konnection in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1DAE9EEC2C202C6A0028E2DC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1DAE9EF62C202C6A0028E2DC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				1D0753412C24934E00FC0592 /* Konnection.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1D0753402C24933700FC0592 /* release */ = {
+			isa = PBXGroup;
+			children = (
+				1D07533F2C24933700FC0592 /* Konnection.xcframework */,
+			);
+			name = release;
+			path = "../../konnection-swift/build/XCFrameworks/release";
+			sourceTree = "<group>";
+		};
 		1DAE9ED52C202C670028E2DC = {
 			isa = PBXGroup;
 			children = (
@@ -82,8 +74,6 @@
 			isa = PBXGroup;
 			children = (
 				1DAE9EDE2C202C670028E2DC /* Konnection-SPM-Sample.app */,
-				1DAE9EEF2C202C6A0028E2DC /* Konnection-SPM-SampleTests.xctest */,
-				1DAE9EF92C202C6A0028E2DC /* Konnection-SPM-SampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,6 +101,7 @@
 		1DAE9F0D2C2098670028E2DC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1D0753402C24933700FC0592 /* release */,
 				1D78E7CF2C221B3000A40DAF /* Konnection.xcframework */,
 			);
 			name = Frameworks;
@@ -126,6 +117,7 @@
 				1DAE9EDA2C202C670028E2DC /* Sources */,
 				1DAE9EDB2C202C670028E2DC /* Frameworks */,
 				1DAE9EDC2C202C670028E2DC /* Resources */,
+				1D0753432C24934E00FC0592 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -133,47 +125,10 @@
 			);
 			name = "Konnection-SPM-Sample";
 			packageProductDependencies = (
-				1DCADCFB2C2336E800ADC909 /* Konnection */,
 			);
 			productName = "Konnection-SPM-Sample";
 			productReference = 1DAE9EDE2C202C670028E2DC /* Konnection-SPM-Sample.app */;
 			productType = "com.apple.product-type.application";
-		};
-		1DAE9EEE2C202C6A0028E2DC /* Konnection-SPM-SampleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1DAE9F062C202C6A0028E2DC /* Build configuration list for PBXNativeTarget "Konnection-SPM-SampleTests" */;
-			buildPhases = (
-				1DAE9EEB2C202C6A0028E2DC /* Sources */,
-				1DAE9EEC2C202C6A0028E2DC /* Frameworks */,
-				1DAE9EED2C202C6A0028E2DC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1DAE9EF12C202C6A0028E2DC /* PBXTargetDependency */,
-			);
-			name = "Konnection-SPM-SampleTests";
-			productName = "Konnection-SPM-SampleTests";
-			productReference = 1DAE9EEF2C202C6A0028E2DC /* Konnection-SPM-SampleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		1DAE9EF82C202C6A0028E2DC /* Konnection-SPM-SampleUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1DAE9F092C202C6A0028E2DC /* Build configuration list for PBXNativeTarget "Konnection-SPM-SampleUITests" */;
-			buildPhases = (
-				1DAE9EF52C202C6A0028E2DC /* Sources */,
-				1DAE9EF62C202C6A0028E2DC /* Frameworks */,
-				1DAE9EF72C202C6A0028E2DC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1DAE9EFB2C202C6A0028E2DC /* PBXTargetDependency */,
-			);
-			name = "Konnection-SPM-SampleUITests";
-			productName = "Konnection-SPM-SampleUITests";
-			productReference = 1DAE9EF92C202C6A0028E2DC /* Konnection-SPM-SampleUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -188,14 +143,6 @@
 					1DAE9EDD2C202C670028E2DC = {
 						CreatedOnToolsVersion = 15.4;
 					};
-					1DAE9EEE2C202C6A0028E2DC = {
-						CreatedOnToolsVersion = 15.4;
-						TestTargetID = 1DAE9EDD2C202C670028E2DC;
-					};
-					1DAE9EF82C202C6A0028E2DC = {
-						CreatedOnToolsVersion = 15.4;
-						TestTargetID = 1DAE9EDD2C202C670028E2DC;
-					};
 				};
 			};
 			buildConfigurationList = 1DAE9ED92C202C670028E2DC /* Build configuration list for PBXProject "Konnection-SPM-Sample" */;
@@ -208,15 +155,12 @@
 			);
 			mainGroup = 1DAE9ED52C202C670028E2DC;
 			packageReferences = (
-				1DCADCFA2C2336E800ADC909 /* XCRemoteSwiftPackageReference "konnection" */,
 			);
 			productRefGroup = 1DAE9EDF2C202C670028E2DC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				1DAE9EDD2C202C670028E2DC /* Konnection-SPM-Sample */,
-				1DAE9EEE2C202C6A0028E2DC /* Konnection-SPM-SampleTests */,
-				1DAE9EF82C202C6A0028E2DC /* Konnection-SPM-SampleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -228,20 +172,6 @@
 			files = (
 				1DAE9EEA2C202C6A0028E2DC /* Preview Assets.xcassets in Resources */,
 				1DAE9EE62C202C6A0028E2DC /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1DAE9EED2C202C6A0028E2DC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1DAE9EF72C202C6A0028E2DC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,34 +187,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1DAE9EEB2C202C6A0028E2DC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1DAE9EF52C202C6A0028E2DC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		1DAE9EF12C202C6A0028E2DC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1DAE9EDD2C202C670028E2DC /* Konnection-SPM-Sample */;
-			targetProxy = 1DAE9EF02C202C6A0028E2DC /* PBXContainerItemProxy */;
-		};
-		1DAE9EFB2C202C6A0028E2DC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1DAE9EDD2C202C670028E2DC /* Konnection-SPM-Sample */;
-			targetProxy = 1DAE9EFA2C202C6A0028E2DC /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DAE9F012C202C6A0028E2DC /* Debug */ = {
@@ -410,7 +313,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Konnection-SPM-Sample/Preview Content\"";
-				DEVELOPMENT_TEAM = Y4NP5D9L5A;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -448,7 +351,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Konnection-SPM-Sample/Preview Content\"";
-				DEVELOPMENT_TEAM = Y4NP5D9L5A;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -477,92 +380,6 @@
 			};
 			name = Release;
 		};
-		1DAE9F072C202C6A0028E2DC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "dev.tmapps.Konnection-SPM-SampleTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Konnection-SPM-Sample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Konnection-SPM-Sample";
-			};
-			name = Debug;
-		};
-		1DAE9F082C202C6A0028E2DC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "dev.tmapps.Konnection-SPM-SampleTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Konnection-SPM-Sample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Konnection-SPM-Sample";
-			};
-			name = Release;
-		};
-		1DAE9F0A2C202C6A0028E2DC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "dev.tmapps.Konnection-SPM-SampleUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Konnection-SPM-Sample";
-			};
-			name = Debug;
-		};
-		1DAE9F0B2C202C6A0028E2DC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "dev.tmapps.Konnection-SPM-SampleUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Konnection-SPM-Sample";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -584,44 +401,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DAE9F062C202C6A0028E2DC /* Build configuration list for PBXNativeTarget "Konnection-SPM-SampleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1DAE9F072C202C6A0028E2DC /* Debug */,
-				1DAE9F082C202C6A0028E2DC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		1DAE9F092C202C6A0028E2DC /* Build configuration list for PBXNativeTarget "Konnection-SPM-SampleUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1DAE9F0A2C202C6A0028E2DC /* Debug */,
-				1DAE9F0B2C202C6A0028E2DC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		1DCADCFA2C2336E800ADC909 /* XCRemoteSwiftPackageReference "konnection" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/TM-Apps/konnection";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		1DCADCFB2C2336E800ADC909 /* Konnection */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1DCADCFA2C2336E800ADC909 /* XCRemoteSwiftPackageReference "konnection" */;
-			productName = Konnection;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1DAE9ED62C202C670028E2DC /* Project object */;
 }

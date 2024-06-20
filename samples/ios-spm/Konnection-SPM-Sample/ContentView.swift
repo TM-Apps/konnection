@@ -72,11 +72,11 @@ extension NetworkConnection? {
     var sfSymbolName: String {
         get {
             switch self {
-            case .wifi: return "wifi"
-            case .mobile: return "cellularbars"
-            case .ethernet: return "app.connected.to.app.below.fill"
-            case .bluetoothTethering: return "b.circle"
-            case .unknownConnectionType: return "exclamationmark.icloud"
+            case .some(.wifi): return "wifi"
+            case .some(.mobile): return "cellularbars"
+            case .some(.ethernet): return "app.connected.to.app.below.fill"
+            case .some(.bluetoothTethering): return "b.circle"
+            case .some(.unknownConnectionType): return "exclamationmark.icloud"
             default: return "icloud.slash"
             }
         }
@@ -85,11 +85,11 @@ extension NetworkConnection? {
     var message: String {
         get {
             switch self {
-            case .wifi: return "Connected by Wifi"
-            case .mobile: return "Connected by Mobile Network"
-            case .ethernet: return "Connected by Ethernet"
-            case .bluetoothTethering: return "Connected by Bluetooth TETHERING"
-            case .unknownConnectionType: return "Connected by Unknown Network"
+            case .some(.wifi): return "Connected by Wifi"
+            case .some(.mobile): return "Connected by Mobile Network"
+            case .some(.ethernet): return "Connected by Ethernet"
+            case .some(.bluetoothTethering): return "Connected by Bluetooth TETHERING"
+            case .some(.unknownConnectionType): return "Connected by Unknown Network"
             default: return "No Connection"
             }
         }
