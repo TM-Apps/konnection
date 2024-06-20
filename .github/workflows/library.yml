@@ -21,7 +21,7 @@ jobs:
     #- name: Install gpg
     #  run: brew install gnupg
 
-    - name: setup JDK
+    - name: Setup JDK
       uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
@@ -30,18 +30,19 @@ jobs:
     #- name: Select Xcode
     #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
 
-    - name: xcode version
+    - name: Xcode Version
       run: /usr/bin/xcodebuild -version
 
-    - name: build library
+    - name: Build Library
       run: ./gradlew konnection:build
 
-    - name: assemble xcFramework
+    - name: Assemble XCFramework
       run: ./gradlew konnection-swift:assembleKonnectionReleaseXCFramework
 
-    - name: upload artifacts
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
+        name: repository
         path: ./
 
   sample-android:
@@ -49,19 +50,28 @@ jobs:
     needs: build
 
     steps:
-    - name: Download artifacts
+    - name: Download Artifacts
       uses: actions/download-artifact@v4
+      with:
+        name: repository
+        path: ${{ github.workspace }}
 
-    - name: setup JDK
+    - name: Validate Artifacts
+      run: |
+        ls -al ${{ github.workspace }}
+        chmod -R 777 ${{ github.workspace }}
+        ls -al ${{ github.workspace }}
+
+    - name: Setup JDK
       uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
         java-version: 17
 
-    - name: enter on artifact
+    - name: Enter on Artifact
       run: cd artifact
 
-    - name: build sample app
+    - name: Build Sample App
       run: ./gradlew samples:android:build
 
   sample-ios:
@@ -69,10 +79,10 @@ jobs:
     needs: build
 
     steps:
-    - name: Download artifacts
+    - name: Download Artifacts
       uses: actions/download-artifact@v4
 
-    - name: setup JDK
+    - name: Setup JDK
       uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
@@ -81,13 +91,13 @@ jobs:
     #- name: Select Xcode
     #  run: sudo xcode-select -switch /Applications/Xcode_11.3.app
 
-    - name: Xcode version
+    - name: Xcode Version
       run: /usr/bin/xcodebuild -version
 
-    - name: enter on artifact
+    - name: Enter on Artifact
       run: cd artifact
 
-    - name: build sample app
+    - name: Build Sample App
       run: ./gradlew samples:ios:build
 
   sample-desktop:
@@ -95,17 +105,17 @@ jobs:
     needs: build
 
     steps:
-    - name: Download artifacts
+    - name: Download Artifacts
       uses: actions/download-artifact@v4
 
-    - name: setup JDK
+    - name: Setup JDK
       uses: actions/setup-java@v4
       with:
         distribution: 'adopt'
         java-version: 17
 
-    - name: enter on artifact
+    - name: Enter on Artifact
       run: cd artifact
 
-    - name: build sample app
+    - name: Build Sample App
       run: ./gradlew samples:desktop:build
