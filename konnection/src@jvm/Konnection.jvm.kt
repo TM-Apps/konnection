@@ -34,7 +34,8 @@ actual class Konnection private constructor(
         actual fun createInstance(
             enableDebugLog: Boolean,
             ipResolvers: List<IpResolver>
-        ): Konnection = createInstance( // require(INSTANCE == null) { "Single Instance already created!" }
+        ): Konnection = createInstance(
+            // require(INSTANCE == null) { "Single Instance already created!" }
             connectionCheckTime = 3.seconds,
             enableDebugLog = enableDebugLog,
             ipResolvers = ipResolvers,
@@ -81,11 +82,11 @@ actual class Konnection private constructor(
         NetworkInterface.getNetworkInterfaces().toList()
             .firstNotNullOfOrNull {
                 if (it.isLoopback || !it.isUp) null
-                else with(it.displayName.lowercase()) {
+                else with(it.displayName.lowercase() + it.name.lowercase()) {
                     when {
-                        contains("wi-fi|wireless|en0".toRegex()) -> NetworkConnection.WIFI
-                        contains("ethernet|lan|en1".toRegex()) -> NetworkConnection.ETHERNET
-                        else -> null
+                        contains("wi-fi|wireless|en0|eth0".toRegex()) -> NetworkConnection.WIFI
+                        contains("ethernet|lan|en1|eth1|eth".toRegex()) -> NetworkConnection.ETHERNET
+                        else -> NetworkConnection.UNKNOWN_CONNECTION_TYPE
                     }
                 }
             }
