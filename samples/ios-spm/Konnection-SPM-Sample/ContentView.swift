@@ -15,19 +15,19 @@ struct ContentView: View {
     var body: some View {
         VStack {
             ConnectionTypeView(type: networkConnection)
-            
+
             if let ipv4Info = ipInfo?.ipV4Info {
                 Text(ipv4Info)
                     .padding(.top)
             }
-            
+
             if let ipv6Info = ipInfo?.ipV6Info {
                 Text(ipv6Info)
                     .padding(.top)
             }
 
-            if let externalIpV4 = ipInfo?.externalIpV4Info {
-                Text(externalIpV4)
+            if let externalIp = ipInfo?.externalIpInfo {
+                Text(externalIp)
                     .padding(.top)
             }
         }
@@ -61,7 +61,7 @@ struct ConnectionTypeView: View {
                 .scaledToFit()
                 .frame(width: 150, height: 150)
                 .foregroundStyle(.tint)
-            
+
             Text(type.message)
                 .padding(.all)
         }
@@ -115,9 +115,9 @@ extension ConnectionInfo {
         }
     }
 
-    var externalIpV4Info: String? {
+    var externalIpInfo: String? {
         get {
-            if let ip = externalIpV4 {
+            if let ip = externalIp {
                 return "External IP: \(ip)"
             }
             return nil

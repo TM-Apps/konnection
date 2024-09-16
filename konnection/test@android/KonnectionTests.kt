@@ -10,7 +10,9 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -33,8 +35,14 @@ class KonnectionTests {
 
     @Before
     fun setup() {
+        mockkStatic(NetworkInterface::class)
         setAndroidVersion(Build.VERSION_CODES.P)
         every { context.getSystemService(any()) } returns connectivityManager
+    }
+
+    @After
+    fun teardown() {
+        unmockkAll()
     }
 
     @Test @Suppress("DEPRECATION")
@@ -142,7 +150,7 @@ class KonnectionTests {
     }
 
     @Test
-    fun `getCurrentIpInfo() should returns WifiIpInfo true when the current connection type is Wifi`() = runTest {
+    fun `getCurrentIpInfo() should returns Wifi ConnectionInfo when the current connection type is Wifi`() = runTest {
         val network = mockk<Network>()
         val capabilities = mockk<NetworkCapabilities>()
 
@@ -159,15 +167,16 @@ class KonnectionTests {
         val networkInterfaces = listOf(
             mockNetworkInterface(
                 index = 0,
-                name = "fake-NetworkInterface-0",
+                name = "wlan0",
+                displayName = "fake-NetworkInterface-0",
                 inetAddresses = listOf(
                     mockInet4Address(hostAddress = ipv4, isLoopbackAddress = false),
                     mockInet6Address(hostAddress = ipv6, isLoopbackAddress = false)
-                )
+                ),
+                isUp = true
             )
         )
 
-        mockkStatic(NetworkInterface::class)
         every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
         coEvery { externalIpResolver.get() } returns null
@@ -175,8 +184,8 @@ class KonnectionTests {
         Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.WIFI, ipv4 = ipv4, ipv6 = ipv6), konnection.getInfo())
     }
 
-    @Test @Suppress("DEPRECATION")
-    fun `getCurrentIpInfo() should returns MobileIpInfo when the current connection type is Mobile`() = runTest {
+    @Test
+    fun `getCurrentIpInfo() should returns Mobile ConnectionInfo when the current connection type is Mobile`() = runTest {
         val network = mockk<Network>()
         val capabilities = mockk<NetworkCapabilities>()
 
@@ -192,20 +201,22 @@ class KonnectionTests {
         val networkInterfaces = listOf(
             mockNetworkInterface(
                 index = 0,
-                name = "fake-NetworkInterface-0",
+                name = "rmnet_ipa0",
+                displayName = "fake-NetworkInterface-0",
                 inetAddresses = listOf(
                     mockInet4Address(hostAddress = ipv4, isLoopbackAddress = false)
-                )
+                ),
+                isUp = true
             )
         )
 
         mockkStatic(NetworkInterface::class)
         every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
-        val externalIpV4 = "192.192.192.192"
-        coEvery { externalIpResolver.get() } returns externalIpV4
+        val externalIp = "192.192.192.192"
+        coEvery { externalIpResolver.get() } returns externalIp
 
-        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.MOBILE, ipv4 = ipv4, externalIpV4 = externalIpV4), konnection.getInfo())
+        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.MOBILE, ipv4 = ipv4, externalIp = externalIp), konnection.getInfo())
     }
 
     private fun setAndroidVersion(version: Int) {

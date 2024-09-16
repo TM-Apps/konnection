@@ -106,20 +106,36 @@ actual class Konnection private constructor(
     actual suspend fun getInfo(): ConnectionInfo? = withContext(Dispatchers.IO) {
         val networkConnection = getCurrentNetworkConnection() ?: return@withContext null
         try {
+            debugLog("getIpInfo networkConnection = $networkConnection")
+
             var ipv4: String? = null
             var ipv6: String? = null
 
-            val networks = NetworkInterface.getNetworkInterfaces()
+            for (networkInterface in NetworkInterface.getNetworkInterfaces()) {
+                debugLog("getIpInfo networkInterface = $networkInterface")
+                if (
+                    networkInterface.isUp &&
+                    ((networkConnection == NetworkConnection.WIFI && networkInterface.name.startsWith("wlan")) ||
+                     (networkConnection == NetworkConnection.MOBILE && networkInterface.name.startsWith("rmnet")) ||
+                     (networkConnection == NetworkConnection.ETHERNET && networkInterface.name.startsWith("eth")) ||
+                     (networkConnection == NetworkConnection.BLUETOOTH_TETHERING && networkInterface.name.startsWith("bt")) ||
+                     (networkConnection == NetworkConnection.UNKNOWN_CONNECTION_TYPE && networkInterface.name.startsWith("ap")) ||
+                     (networkConnection == NetworkConnection.UNKNOWN_CONNECTION_TYPE && networkInterface.name.startsWith("p2p")) ||
+                     (networkConnection == NetworkConnection.UNKNOWN_CONNECTION_TYPE && networkInterface.name.startsWith("tun")) ||
+                     (networkConnection == NetworkConnection.UNKNOWN_CONNECTION_TYPE && networkInterface.name.startsWith("ppp")) ||
+                     (networkConnection == NetworkConnection.UNKNOWN_CONNECTION_TYPE && networkInterface.name.startsWith("wigig")) ||
+                     (networkConnection == NetworkConnection.UNKNOWN_CONNECTION_TYPE && networkInterface.name.startsWith("fxa")))
+                ) {
+                    debugLog("getIpAddress networkConnectionInterface = $networkInterface")
+                    val inetAddresses = networkInterface.inetAddresses
 
-            while (networks.hasMoreElements()) {
-                val enumIpAddr = networks.nextElement().inetAddresses
-
-                while (enumIpAddr.hasMoreElements()) {
-                    val inetAddress = enumIpAddr.nextElement()
-                    debugLog("getIpAddress inetAddress = $inetAddress")
-                    if (!inetAddress.isLoopbackAddress) {
-                        if (ipv4 == null && inetAddress is Inet4Address) ipv4 = inetAddress.hostAddress?.toString()
-                        if (ipv6 == null && inetAddress is Inet6Address) ipv6 = inetAddress.hostAddress?.toString()
+                    while (inetAddresses.hasMoreElements()) {
+                        val inetAddress = inetAddresses.nextElement()
+                        debugLog("getIpAddress inetAddress = $inetAddress")
+                        if (!inetAddress.isLoopbackAddress) {
+                            if (ipv4 == null && inetAddress is Inet4Address) ipv4 = inetAddress.hostAddress?.toString()
+                            if (ipv6 == null && inetAddress is Inet6Address) ipv6 = inetAddress.hostAddress?.toString()
+                        }
                     }
                 }
             }
@@ -128,7 +144,7 @@ actual class Konnection private constructor(
                 connection = networkConnection,
                 ipv4 = ipv4,
                 ipv6 = ipv6,
-                externalIpV4 = getExternalIp()
+                externalIp = getExternalIp()
             )
         } catch (ex: Exception) {
             debugLog("getIpInfo networkConnection = $networkConnection", ex)

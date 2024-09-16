@@ -106,7 +106,7 @@ data class ConnectionInfo(
     val connection: NetworkConnection,
     val ipv4: String? = null,
     val ipv6: String? = null,
-    val externalIpV4: String? = null
+    val externalIp: String? = null
 )
 
 class FlowWrapper<out T> internal constructor(
@@ -169,5 +169,5 @@ private fun dev.tmapps.konnection.ConnectionInfo.toConnectionInfo(): ConnectionI
         connection = this.connection.toNetworkConnection(),
         ipv4 = this.ipv4,
         ipv6 = this.ipv6,
-        externalIpV4 = this.externalIpV4
+        externalIp = this.externalIp
     )

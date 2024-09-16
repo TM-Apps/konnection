@@ -154,11 +154,10 @@ jobs:
 
     - name: Build Sample App
       run: |
-        set -o pipefail
         xcodebuild -project samples/ios-spm/Konnection-SPM-Sample.xcodeproj \
           -sdk iphonesimulator \
           -destination generic/platform=iOS \
-         clean build | xcpretty -c
+          clean build | xcpretty -c
 
   publish:
     runs-on: macOS-latest

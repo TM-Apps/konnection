@@ -10,8 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import platform.Foundation.NSLog
 import platform.Foundation.NSProcessInfo
-import platform.posix.AF_INET
-import platform.posix.AF_INET6
 import kotlin.concurrent.Volatile
 
 @OptIn(ExperimentalForeignApi::class)
@@ -65,11 +63,13 @@ actual class Konnection private constructor(
         val networkConnection = getCurrentNetworkConnection() ?: return null
         val networkInterfaces = networkConnection.networkInterfaces ?: return null
 
+        val ifAddresses = ifaddrsInteractor.get(networkInterfaces)
+
         return ConnectionInfo(
             connection = networkConnection,
-            ipv4 = ifaddrsInteractor.get(networkInterfaces, AF_INET),
-            ipv6 = ifaddrsInteractor.get(networkInterfaces, AF_INET6),
-            externalIpV4 = getExternalIp()
+            ipv4 = ifAddresses.afInet,
+            ipv6 = ifAddresses.afInet6,
+            externalIp = getExternalIp()
         )
     }
 

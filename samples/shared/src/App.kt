@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,10 +33,12 @@ import dev.tmapps.konnection.sample.theme.SampleTheme
 fun App(
     enableDebugLog: Boolean = false
 ) {
-    val konnection by remember { mutableStateOf(Konnection.createInstance(enableDebugLog)) }
+    val konnection = Konnection.createInstance(enableDebugLog)
     val networkState = konnection.observeNetworkConnection().collectAsState(null)
 
     val ipInfo = produceState<ConnectionInfo?>(null, networkState.value) { value = konnection.getInfo() }
+
+    var currentConnectionValue by remember { mutableStateOf(konnection.getCurrentNetworkConnection()) }
 
     SampleTheme {
         Surface(
@@ -65,7 +69,7 @@ fun App(
 
                 ipInfo(ipInfo.value?.ipV4Info)
                 ipInfo(ipInfo.value?.ipV6Info, addPadding = true)
-                ipInfo(ipInfo.value?.externalIpV4Info, addPadding = true)
+                ipInfo(ipInfo.value?.externalIpInfo, addPadding = true)
             }
         }
     }

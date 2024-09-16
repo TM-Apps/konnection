@@ -50,6 +50,7 @@ internal class NWPathMonitorNetworkMonitor(
 
     override fun clear() {
         nw_path_monitor_cancel(monitor)
+        debugLog("Konnection stopped!")
     }
 
     override fun isConnected(): Boolean = nw_path_get_status(path) == nw_path_status_satisfied

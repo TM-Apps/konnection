@@ -11,3 +11,8 @@ internal actual fun getUrlContent(url: String): String? =
 internal actual fun logError(tag: String, message: String, error: Throwable) {
     NSLog("$tag -> $message\nerror=($error)")
 }
+
+internal data class IfAddresses(
+    val afInet: String? = null,
+    val afInet6: String? = null
+)

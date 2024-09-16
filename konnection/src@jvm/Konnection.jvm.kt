@@ -22,7 +22,9 @@ actual class Konnection private constructor(
     private val connectionCheckTime: Duration,
     private val enableDebugLog: Boolean,
     private val ipResolvers: List<IpResolver>,
-    private val pingHostCheckers: List<String>
+    private val pingHostCheckers: List<String>,
+    private val wifiNetworkInterfaces: List<String>,
+    private val ethernetNetworkInterfaces: List<String>
 ) {
     actual companion object {
         @Volatile
@@ -49,12 +51,16 @@ actual class Konnection private constructor(
             ),
             pingHostCheckers: List<String> = listOf(
                 "google.com", "amazon.com", "facebook.com", "apple.com"
-            )
+            ),
+            wifiNetworkInterfaces: List<String> = listOf("wi-fi", "wireless", "en0", "wlan0", "ap0"),
+            ethernetNetworkInterfaces: List<String> = listOf("ethernet", "lan", "en1", "eth0", "eth1")
         ): Konnection = Konnection(
             connectionCheckTime = connectionCheckTime,
             enableDebugLog = enableDebugLog,
             ipResolvers = ipResolvers,
-            pingHostCheckers = pingHostCheckers
+            pingHostCheckers = pingHostCheckers,
+            wifiNetworkInterfaces = wifiNetworkInterfaces,
+            ethernetNetworkInterfaces = ethernetNetworkInterfaces
         ).also {
             INSTANCE = it
         }
@@ -79,14 +85,24 @@ actual class Konnection private constructor(
 
     actual fun getCurrentNetworkConnection(): NetworkConnection? = try {
         NetworkInterface.getNetworkInterfaces().toList()
-            .firstNotNullOfOrNull {
-                if (it.isLoopback || !it.isUp) null
-                else with(it.displayName.lowercase()) {
-                    when {
-                        contains("wi-fi|wireless|en0".toRegex()) -> NetworkConnection.WIFI
-                        contains("ethernet|lan|en1".toRegex()) -> NetworkConnection.ETHERNET
-                        else -> null
+            .mapNotNull { networkInterface ->
+                if (networkInterface.isLoopback || !networkInterface.isUp) null
+                else {
+                    debugLog("getCurrentNetworkConnection -> network interface: ${networkInterface.name} - ${networkInterface.displayName}")
+                    with(networkInterface.name.lowercase()) {
+                        when {
+                            wifiNetworkInterfaces.any { contains(it) } -> NetworkConnection.WIFI
+                            ethernetNetworkInterfaces.any { contains(it) } -> NetworkConnection.ETHERNET
+                            else -> null
+                        }
                     }
+                }
+            }.let {
+                when {
+                    it.isEmpty() -> null
+                    it.contains(NetworkConnection.WIFI) -> NetworkConnection.WIFI
+                    it.contains(NetworkConnection.ETHERNET) -> NetworkConnection.ETHERNET
+                    else -> NetworkConnection.UNKNOWN_CONNECTION_TYPE
                 }
             }
     } catch (error: Throwable) {
@@ -99,21 +115,16 @@ actual class Konnection private constructor(
     actual suspend fun getInfo(): ConnectionInfo? = withContext(Dispatchers.IO) {
         val networkConnection = getCurrentNetworkConnection() ?: return@withContext null
         try {
+            val networkInterface = getNetworkInterface(networkConnection) ?: return@withContext null
+
             var ipv4: String? = null
             var ipv6: String? = null
 
-            val networks = NetworkInterface.getNetworkInterfaces()
-
-            while (networks.hasMoreElements()) {
-                val enumIpAddr = networks.nextElement().inetAddresses
-
-                while (enumIpAddr.hasMoreElements()) {
-                    val inetAddress = enumIpAddr.nextElement()
-                    debugLog("getIpAddress inetAddress = $inetAddress")
-                    if (!inetAddress.isLoopbackAddress) {
-                        if (ipv4 == null && inetAddress is Inet4Address) ipv4 = inetAddress.hostAddress?.toString()
-                        if (ipv6 == null && inetAddress is Inet6Address) ipv6 = inetAddress.hostAddress?.toString()
-                    }
+            for (inetAddress in networkInterface.inetAddresses) {
+                debugLog("getIpAddress inetAddress = $inetAddress")
+                if (!inetAddress.isLoopbackAddress && networkInterface.isUp) {
+                    if (ipv4 == null && inetAddress is Inet4Address) ipv4 = inetAddress.hostAddress?.toString()
+                    if (ipv6 == null && inetAddress is Inet6Address) ipv6 = inetAddress.hostAddress?.toString()
                 }
             }
 
@@ -121,12 +132,31 @@ actual class Konnection private constructor(
                 connection = networkConnection,
                 ipv4 = ipv4,
                 ipv6 = ipv6,
-                externalIpV4 = getExternalIp()
+                externalIp = getExternalIp()
             )
         } catch (ex: Exception) {
             debugLog("getIpInfo networkConnection = $networkConnection", ex)
             return@withContext null
         }
+    }
+
+    private fun getNetworkInterface(networkConnection: NetworkConnection): NetworkInterface? = try {
+        NetworkInterface.getNetworkInterfaces().toList()
+            .firstNotNullOfOrNull { networkInterface ->
+                with(networkInterface.name.lowercase()) {
+                    when (networkConnection) {
+                        NetworkConnection.WIFI -> {
+                            if (wifiNetworkInterfaces.any { contains(it) }) networkInterface else null
+                        }
+                        NetworkConnection.ETHERNET -> {
+                            if (ethernetNetworkInterfaces.any { contains(it) }) networkInterface else null
+                        }
+                        else -> null
+                    }
+                }
+            }
+    } catch (error: Throwable) {
+        null
     }
 
     private val String.isHostAvailable: Boolean

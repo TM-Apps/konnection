@@ -56,7 +56,7 @@ data class ConnectionInfo(
     val connection: NetworkConnection,
     val ipv4: String? = null,
     val ipv6: String? = null,
-    val externalIpV4: String? = null
+    val externalIp: String? = null
 )
 
 /** IP resolver contract */

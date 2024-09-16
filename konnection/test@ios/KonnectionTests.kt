@@ -5,12 +5,9 @@ import io.mockative.Mock
 import io.mockative.any
 import io.mockative.classOf
 import io.mockative.coEvery
-import io.mockative.eq
 import io.mockative.every
 import io.mockative.mock
 import kotlinx.coroutines.test.runTest
-import platform.posix.AF_INET
-import platform.posix.AF_INET6
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -66,8 +63,7 @@ class KonnectionTests {
         val ipv4 = "255.255.255.255"
         val ipv6 = "805B:2D9D:DC28:0000:0000:0000:D4C8:1FFF"
 
-        every { ifaddrsInteractor.get(any(), eq(AF_INET)) }.returns(ipv4)
-        every { ifaddrsInteractor.get(any(), eq(AF_INET6)) }.returns(ipv6)
+        every { ifaddrsInteractor.get(any()) }.returns(IfAddresses(afInet = ipv4, afInet6 = ipv6))
         coEvery { externalIpResolver.get() }.returns(null)
 
         assertEquals(ConnectionInfo(connection = NetworkConnection.WIFI, ipv4 = ipv4, ipv6 = ipv6), konnection.getInfo())
@@ -78,13 +74,12 @@ class KonnectionTests {
         every { networkMonitor.getCurrentNetworkConnection() }.returns(NetworkConnection.MOBILE)
 
         val ipv4 = "255.255.255.255"
-        val externalIpV4 = "192.192.192.192"
+        val externalIp = "192.192.192.192"
 
-        every { ifaddrsInteractor.get(any(), eq(AF_INET)) }.returns(ipv4)
-        every { ifaddrsInteractor.get(any(), eq(AF_INET6)) }.returns(null)
-        coEvery { externalIpResolver.get() }.returns(externalIpV4)
+        every { ifaddrsInteractor.get(any()) }.returns(IfAddresses(afInet = ipv4, afInet6 = null))
+        coEvery { externalIpResolver.get() }.returns(externalIp)
 
-        assertEquals(ConnectionInfo(connection = NetworkConnection.MOBILE, ipv4 = ipv4, externalIpV4 = externalIpV4), konnection.getInfo())
+        assertEquals(ConnectionInfo(connection = NetworkConnection.MOBILE, ipv4 = ipv4, externalIp = externalIp), konnection.getInfo())
     }
 
     @Test
@@ -93,12 +88,11 @@ class KonnectionTests {
 
         val ipv4 = "255.255.255.255"
         val ipv6 = "2001:0000:130F:0000:0000:09C0:876A:130B"
-        val externalIpV4 = "192.192.192.192"
+        val externalIp = "192.192.192.192"
 
-        every { ifaddrsInteractor.get(any(), eq(AF_INET)) }.returns(ipv4)
-        every { ifaddrsInteractor.get(any(), eq(AF_INET6)) }.returns(ipv6)
-        coEvery { externalIpResolver.get() }.returns(externalIpV4)
+        every { ifaddrsInteractor.get(any()) }.returns(IfAddresses(afInet = ipv4, afInet6 = ipv6))
+        coEvery { externalIpResolver.get() }.returns(externalIp)
 
-        assertEquals(ConnectionInfo(connection = NetworkConnection.ETHERNET, ipv4 = ipv4, ipv6 = ipv6, externalIpV4 = externalIpV4), konnection.getInfo())
+        assertEquals(ConnectionInfo(connection = NetworkConnection.ETHERNET, ipv4 = ipv4, ipv6 = ipv6, externalIp = externalIp), konnection.getInfo())
     }
 }

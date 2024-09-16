@@ -43,8 +43,8 @@ class KonnectionTests {
         val networkInterfaces = listOf(
             mockNetworkInterface(
                 index = 0,
-                name = "fake-NetworkInterface-0",
-                displayName = "wi-fi",
+                name = "wi-fi",
+                displayName = "fake-NetworkInterface-0",
                 isUp = true,
                 isLoopback = false
             )
@@ -57,12 +57,12 @@ class KonnectionTests {
     }
 
     @Test
-    fun `getCurrentNetworkConnection() should returns ETHERNET when available connection type is WiFi`() {
+    fun `getCurrentNetworkConnection() should returns ETHERNET when available connection type is Ethernet`() {
         val networkInterfaces = listOf(
             mockNetworkInterface(
                 index = 0,
-                name = "fake-NetworkInterface-0",
-                displayName = "lan",
+                name = "lan",
+                displayName = "fake-NetworkInterface-0",
                 isUp = true,
                 isLoopback = false
             )
@@ -75,15 +75,15 @@ class KonnectionTests {
     }
 
     @Test
-    fun `getCurrentIpInfo() should returns WifiIpInfo true when the current connection type is Wifi`() = runTest {
+    fun `getCurrentIpInfo() should returns Wifi ConnectionInfo when the current connection type is Wifi`() = runTest {
         val ipv4 = "255.255.255.255"
         val ipv6 = "805B:2D9D:DC28:0000:0000:0000:D4C8:1FFF"
 
         val networkInterfaces = listOf(
             mockNetworkInterface(
                 index = 0,
-                name = "fake-NetworkInterface-0",
-                displayName = "wi-fi",
+                name = "wi-fi",
+                displayName = "fake-NetworkInterface-0",
                 isUp = true,
                 isLoopback = false,
                 inetAddresses = listOf(
@@ -96,22 +96,22 @@ class KonnectionTests {
         mockkStatic(NetworkInterface::class)
         every { NetworkInterface.getNetworkInterfaces() } answers { networkInterfaces.toEnumeration() }
 
-        val externalIpV4 = "192.192.192.192"
-        coEvery { externalIpResolver.get() } returns externalIpV4
+        val externalIp = "192.192.192.192"
+        coEvery { externalIpResolver.get() } returns externalIp
 
-        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.WIFI, ipv4 = ipv4, ipv6 = ipv6, externalIpV4 = externalIpV4), konnection.getInfo())
+        Assert.assertEquals(ConnectionInfo(connection = NetworkConnection.WIFI, ipv4 = ipv4, ipv6 = ipv6, externalIp = externalIp), konnection.getInfo())
     }
 
     @Test
-    fun `getCurrentIpInfo() should returns EthernetIpInfo true when the current connection type is Ethernet`() = runTest {
+    fun `getCurrentIpInfo() should returns Ethernet ConnectionInfo when the current connection type is Ethernet`() = runTest {
         val ipv4 = "255.255.255.255"
         val ipv6 = "805B:2D9D:DC28:0000:0000:0000:D4C8:1FFF"
 
         val networkInterfaces = listOf(
             mockNetworkInterface(
                 index = 0,
-                name = "fake-NetworkInterface-0",
-                displayName = "ethernet",
+                name = "ethernet",
+                displayName = "fake-NetworkInterface-0",
                 isUp = true,
                 isLoopback = false,
                 inetAddresses = listOf(

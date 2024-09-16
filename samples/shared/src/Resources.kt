@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.outlined.Bluetooth
 import androidx.compose.material.icons.outlined.Cloud
-import androidx.compose.material.icons.outlined.NetworkCell
 import androidx.compose.material.icons.outlined.SettingsEthernet
 import androidx.compose.material.icons.outlined.SignalCellular4Bar
 import androidx.compose.material.icons.outlined.Wifi
@@ -38,5 +37,5 @@ val ConnectionInfo.ipV4Info: String?
 val ConnectionInfo.ipV6Info: String?
     get() = this.ipv6?.let { "IPv6: $it" }
 
-val ConnectionInfo.externalIpV4Info: String?
-    get() = this.externalIpV4?.let { "External IP: $it" }
+val ConnectionInfo.externalIpInfo: String?
+    get() = this.externalIp?.let { "External IP: $it" }

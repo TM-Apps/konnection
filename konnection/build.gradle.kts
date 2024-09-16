@@ -1,3 +1,5 @@
+import com.android.build.gradle.BaseExtension
+
 plugins {
     kotlin("multiplatform")
     id("com.google.devtools.ksp") version "2.0.0-1.0.22"
@@ -6,7 +8,7 @@ plugins {
 }
 
 group = "dev.tmapps"
-version = "1.4.1"
+version = "1.4.2"
 
 ksp {
     arg("io.mockative:mockative:opt-in:dev.tmapps.konnection.utils.SCNetworkReachabilityInteractor", "kotlinx.cinterop.ExperimentalForeignApi")
@@ -20,11 +22,29 @@ dependencies {
         }
 }
 
+android {
+    testOptions {
+      unitTests.all {
+          it.jvmArgs(
+              "--add-opens", "java.base/java.net=ALL-UNNAMED",
+              "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED",
+              "--add-opens=java.base/java.util=ALL-UNNAMED"
+          )
+      }
+    }
+  }
+
 tasks.jvmTest {
     jvmArgs(
         "--add-opens", "java.base/java.net=ALL-UNNAMED",
-        "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED"
+        "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED"
     )
+}
+
+// workaround for https://youtrack.jetbrains.com/issue/AMPER-813
+project.extensions.getByType<BaseExtension>().defaultConfig {
+    maxSdk = null
 }
 
 // publishing

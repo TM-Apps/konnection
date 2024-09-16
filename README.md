@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.tmapps:konnection:1.4.1")
+    implementation("dev.tmapps:konnection:1.4.2")
 }
 ```
 
@@ -25,7 +25,7 @@ In common code that should get compiled for different platforms, you can add dep
 commonMain {
     dependencies {
         // works as common dependency as well as the platform one
-        implementation("dev.tmapps:konnection:1.4.1")
+        implementation("dev.tmapps:konnection:1.4.2")
     }
 }
 ```
@@ -108,10 +108,14 @@ The Konnection stop will also clear the internal library reference and free the 
 It's possible to create a Konnection single instance with some extra parameters.
 - `connectionCheckTime = [duration]`: allow the control of the check connection time.
 - `pingHostCheckers`: list of hosts to ping on connection check, eg. "google.com", "apple.com", ...
+- `wifiNetworkInterfaces`: list of wi-fi network interface names on the machine.
+- `ethernetNetworkInterfaces`: list of ethernet network interface names on the machine.
 ```kotlin
 val konnection = Konnection.createInstance(
     connectionCheckTime = 5.seconds,
     pingHostCheckers = listOf("myhost.com"),
+    wifiNetworkInterfaces = listOf("wi-fi", "wireless", "wlan0"),
+    ethernetNetworkInterfaces = listOf("ethernet", "lan", "eth0", "eth1")
     ...
 )
 ```
@@ -120,13 +124,13 @@ val konnection = Konnection.createInstance(
 
 The following table defines the possible values per supported platform:
 
-| Connection Type     | Android  | iOS      | JVM |
-|---------------------|:--------:|:--------:|:---:|
-| Wifi                | ✅       | ✅       | ✅   |
-| Mobile              | ✅       | ✅       | ❌   |
-| Ethernet            | ✅       | ✅       | ✅   |
-| Bluetooth Tethering | ✅       | ❌       | ❌   |
-| Unknown             | ✅       | ✅       | ❌   |
+| Connection Type     | Android | iOS | JVM |
+|---------------------|:-------:|:---:|:---:|
+| Wifi                | ✅      | ✅  | ✅  |
+| Mobile              | ✅      | ✅  | ❌  |
+| Ethernet            | ✅      | ✅  | ✅  |
+| Bluetooth Tethering | ✅      | ❌  | ❌  |
+| Unknown             | ✅      | ✅  | ❌  |
 
 > **Unknown** type means there is some internet connection detected but the type is unknown.
 
