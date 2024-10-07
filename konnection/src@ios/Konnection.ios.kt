@@ -61,7 +61,7 @@ actual class Konnection private constructor(
 
     actual suspend fun getInfo(): ConnectionInfo? {
         val networkConnection = getCurrentNetworkConnection() ?: return null
-        val networkInterfaces = networkConnection.networkInterfaces ?: return null
+        val networkInterfaces = networkMonitor.getCurrentNetworkInterfaceNames() ?: return null
 
         val ifAddresses = ifaddrsInteractor.get(networkInterfaces)
 
@@ -74,15 +74,6 @@ actual class Konnection private constructor(
     }
 
     fun stop() = networkMonitor.clear()
-
-    private val NetworkConnection.networkInterfaces: Set<String>?
-        get() = when (this) {
-            NetworkConnection.WIFI -> setOf("en0")
-            NetworkConnection.MOBILE -> setOf("pdp_ip0", "pdp_ip1", "pdp_ip2", "pdp_ip3")
-            NetworkConnection.ETHERNET -> setOf("en2", "en3", "en4") //en1
-            NetworkConnection.BLUETOOTH_TETHERING,
-            NetworkConnection.UNKNOWN_CONNECTION_TYPE -> null
-        }
 
     private suspend fun getExternalIp(): String? =
         ipResolvers.firstNotNullOfOrNull { it.get() }
@@ -100,4 +91,5 @@ internal interface NetworkMonitor {
     fun isConnected(): Boolean
     fun getCurrentNetworkConnection(): NetworkConnection?
     fun observeNetworkConnection(): Flow<NetworkConnection?>
+    suspend fun getCurrentNetworkInterfaceNames(): Set<String>?
 }

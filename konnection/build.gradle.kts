@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.tmapps"
-version = "1.4.2"
+version = "1.4.3"
 
 ksp {
     arg("io.mockative:mockative:opt-in:dev.tmapps.konnection.utils.SCNetworkReachabilityInteractor", "kotlinx.cinterop.ExperimentalForeignApi")

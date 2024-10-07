@@ -3,9 +3,13 @@ package dev.tmapps.konnection
 import android.content.Context
 import androidx.startup.Initializer
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.URL
 
-internal actual fun getUrlContent(url: String): String? = URL(url).readText()
+internal actual suspend fun getUrlContent(url: String): String? = withContext(Dispatchers.IO) {
+    URL(url).readText()
+}
 
 internal actual fun logError(tag: String, message: String, error: Throwable) {
     Log.e(tag, message, error)

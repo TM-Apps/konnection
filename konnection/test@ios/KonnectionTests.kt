@@ -59,6 +59,7 @@ class KonnectionTests {
     @Test
     fun `getCurrentIpInfo should returns WifiIpInfo true when the current connection type is Wifi`() = runTest {
         every { networkMonitor.getCurrentNetworkConnection() }.returns(NetworkConnection.WIFI)
+        coEvery { networkMonitor.getCurrentNetworkInterfaceNames() }.returns(setOf("en0"))
 
         val ipv4 = "255.255.255.255"
         val ipv6 = "805B:2D9D:DC28:0000:0000:0000:D4C8:1FFF"
@@ -72,6 +73,7 @@ class KonnectionTests {
     @Test
     fun `getCurrentIpInfo should returns MobileIpInfo when the current connection type is Mobile`() = runTest {
         every { networkMonitor.getCurrentNetworkConnection() }.returns(NetworkConnection.MOBILE)
+        coEvery { networkMonitor.getCurrentNetworkInterfaceNames() }.returns(setOf("pdp_ip0"))
 
         val ipv4 = "255.255.255.255"
         val externalIp = "192.192.192.192"
@@ -85,6 +87,7 @@ class KonnectionTests {
     @Test
     fun `getCurrentIpInfo should returns MobileIpInfo when the current connection type is Ethernet`() = runTest {
         every { networkMonitor.getCurrentNetworkConnection() }.returns(NetworkConnection.ETHERNET)
+        coEvery { networkMonitor.getCurrentNetworkInterfaceNames() }.returns(setOf("en1"))
 
         val ipv4 = "255.255.255.255"
         val ipv6 = "2001:0000:130F:0000:0000:09C0:876A:130B"

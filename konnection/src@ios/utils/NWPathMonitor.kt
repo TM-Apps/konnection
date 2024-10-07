@@ -4,12 +4,15 @@ import dev.tmapps.konnection.NetworkConnection
 import dev.tmapps.konnection.NetworkMonitor
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
+import kotlinx.cinterop.toKString
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import platform.Network.nw_interface_get_name
 import platform.Network.nw_interface_type_cellular
 import platform.Network.nw_interface_type_other
 import platform.Network.nw_interface_type_wifi
 import platform.Network.nw_interface_type_wired
+import platform.Network.nw_path_enumerate_interfaces
 import platform.Network.nw_path_get_status
 import platform.Network.nw_path_monitor_cancel
 import platform.Network.nw_path_monitor_create
@@ -23,6 +26,7 @@ import platform.NetworkExtension.NWPath
 import platform.darwin.dispatch_get_global_queue
 import platform.posix.QOS_CLASS_BACKGROUND
 
+@OptIn(ExperimentalForeignApi::class)
 internal class NWPathMonitorNetworkMonitor(
     private val logger: (String, Throwable?) -> Unit
 ) : NetworkMonitor {
@@ -58,6 +62,7 @@ internal class NWPathMonitorNetworkMonitor(
     override fun getCurrentNetworkConnection(): NetworkConnection? = getNetworkConnectionFromPath(path)
 
     private fun getNetworkConnectionFromPath(path: nw_path_t): NetworkConnection? = when {
+        path == null -> null
         // The network interface type used for communication over Wi-Fi networks.
         nw_path_uses_interface_type(path, nw_interface_type_wifi) ->  NetworkConnection.WIFI
         // The network interface type used for communication over cellular networks.
@@ -70,4 +75,15 @@ internal class NWPathMonitorNetworkMonitor(
     }
 
     override fun observeNetworkConnection(): Flow<NetworkConnection?> = connectionBroadcaster
+
+    override suspend fun getCurrentNetworkInterfaceNames(): Set<String>? {
+        val networkInterfaces = mutableSetOf<String>()
+        nw_path_enumerate_interfaces(path) { netInterface  ->
+            val netInterfaceName = nw_interface_get_name(netInterface)?.toKString()
+            debugLog("netInterface == $netInterface, netInterface.name == $netInterfaceName")
+            netInterfaceName?.let { networkInterfaces.add(it) }
+            true
+        }
+        return if (networkInterfaces.isEmpty()) null else networkInterfaces
+    }
 }

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import dev.tmapps.konnection.ConnectionInfo
 import dev.tmapps.konnection.Konnection
 import dev.tmapps.konnection.sample.theme.SampleTheme
+import kotlinx.coroutines.CancellationException
 
 @Composable
 fun App(
@@ -36,7 +37,15 @@ fun App(
     val konnection = Konnection.createInstance(enableDebugLog)
     val networkState = konnection.observeNetworkConnection().collectAsState(null)
 
-    val ipInfo = produceState<ConnectionInfo?>(null, networkState.value) { value = konnection.getInfo() }
+    val ipInfo = produceState<ConnectionInfo?>(null, networkState.value) {
+        try {
+            value = konnection.getInfo()
+        } catch (error: Throwable) {
+            if (error !is CancellationException) {
+                throw error
+            }
+        }
+    }
 
     var currentConnectionValue by remember { mutableStateOf(konnection.getCurrentNetworkConnection()) }
 

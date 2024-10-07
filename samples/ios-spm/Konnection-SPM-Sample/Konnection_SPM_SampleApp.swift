@@ -11,7 +11,7 @@ import Konnection
 class AppDelegate: NSObject, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        Konnection.shared.start()
+        Konnection.shared.start(enableDebugLog: true)
         return true
     }
 

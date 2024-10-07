@@ -182,4 +182,12 @@ internal class SCNetworkReachabilityNetworkMonitor(
         debugLog("SCNetworkReachabilityFlags: ${result.contentDeepToString()}")
         return result
     }
+
+    override suspend fun getCurrentNetworkInterfaceNames(): Set<String>? =
+        when (getCurrentNetworkConnection()) {
+            NetworkConnection.WIFI -> setOf("en0")
+            NetworkConnection.MOBILE -> setOf("pdp_ip0", "pdp_ip1", "pdp_ip2", "pdp_ip3")
+            NetworkConnection.ETHERNET -> setOf("en1", "en2", "en3", "en4")
+            else -> null
+        }
 }
