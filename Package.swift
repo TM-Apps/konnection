@@ -10,8 +10,8 @@ let package = Package(
    targets: [
       .binaryTarget(
          name: "Konnection",
-         url: "https://github.com/TM-Apps/konnection/releases/download/1.4.1/Konnection.xcframework.zip",
-         checksum: "1112a9fd4f73ad728dc56c977521d2b4ab53e38d848c88a68ff41e9c571a6457"
+         url: "https://github.com/TM-Apps/konnection/releases/download/1.4.3/Konnection.xcframework.zip",
+         checksum: "9d5e749564cc2e8d94cf89d9846ba66d03e98ae55b835d820369f3101eeed324"
       )
    ]
 )
