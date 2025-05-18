@@ -1,26 +1,33 @@
-rootProject.name = "konnection-amper"
-//enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+rootProject.name = "konnection"
 
 pluginManagement {
     repositories {
-        mavenCentral()
-        google()
         gradlePluginPortal()
-
-        // Amper repositories
-        maven("https://maven.pkg.jetbrains.space/public/p/amper/amper")
-        maven("https://www.jetbrains.com/intellij-repository/releases")
-        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+        mavenCentral()
+        google() /*{
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }*/
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        google()
         mavenCentral()
+        google() /*{
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }*/
     }
 }
 
-plugins {
-    id("org.jetbrains.amper.settings.plugin").version("0.3.1")
-}
+include(":konnection")
+include(":konnection-swift")
+include(":samples:compose")
+include(":samples:android")

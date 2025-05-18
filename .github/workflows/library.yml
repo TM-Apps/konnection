@@ -62,7 +62,7 @@ jobs:
     - name: Build Sample App
       run: ./gradlew samples:android:build
 
-  sample-ios:
+  sample-compose:
     runs-on: macOS-latest
     needs: build
 
@@ -92,33 +92,7 @@ jobs:
       run: xcodebuild -version
 
     - name: Build Sample App
-      run: ./gradlew samples:ios:build
-
-  sample-desktop:
-    runs-on: macOS-latest
-    needs: build
-
-    steps:
-    - name: Download Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build
-        path: ${{ github.workspace }}
-
-    - name: Validate Artifacts
-      run: |
-        ls -al ${{ github.workspace }}
-        chmod -R 777 ${{ github.workspace }}
-        ls -al ${{ github.workspace }}
-
-    - name: Setup JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'adopt'
-        java-version: 17
-
-    - name: Build Sample App
-      run: ./gradlew samples:desktop:build
+      run: ./gradlew samples:compose:build
 
   sample-ios-spm:
     runs-on: macOS-latest
@@ -161,7 +135,7 @@ jobs:
 
   publish:
     runs-on: macOS-latest
-    needs: [sample-android, sample-ios, sample-desktop, sample-ios-spm]
+    needs: [sample-android, sample-compose, sample-ios-spm]
 
     steps:
     - name: Download Artifacts

@@ -1,17 +1,39 @@
 [versions]
-coroutines = "1.9.0"
-mockative = "2.2.2"
+kotlin = "2.1.21"
+coroutines = "1.10.2"
+compose = "1.8.0"
+agp = "8.7.3"
 mockk = "1.13.12"
+coreKtx = "1.16.0"
 
 [libraries]
-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.2" }
-androidx-annotation = { module = "androidx.annotation:annotation", version = "1.8.2" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.10.1" }
+androidx-annotation = { module = "androidx.annotation:annotation", version = "1.9.1" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-startup = { module = "androidx.startup:startup-runtime", version = "1.2.0" }
-turbine = { module = "app.cash.turbine:turbine", version = "1.1.0" }
+turbine = { module = "app.cash.turbine:turbine", version = "1.2.0" }
 robolectric = { module = "org.robolectric:robolectric", version = "4.13" }
-mockative = { module = "io.mockative:mockative", version.ref = "mockative" }
-mockative-processor = { module = "io.mockative:mockative-processor", version.ref = "mockative" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent-jvm = { module = "io.mockk:mockk-agent-jvm", version.ref = "mockk" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version = "2025.05.00" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version = "material3" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version = "foundation" }
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "material-icons-extended" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version = "ui-tooling-preview" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+mokkery = { id = "dev.mokkery", version = "2.7.2" }

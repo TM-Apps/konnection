@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 kotlin {
@@ -20,6 +20,13 @@ kotlin {
             binaryOption("bundleId", "${group}.${xcframeworkName}")
             xcf.add(this)
             isStatic = true
+        }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":konnection"))
+            implementation(libs.kotlinx.coroutines.core)
         }
     }
 }
