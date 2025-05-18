@@ -18,19 +18,19 @@ object KonnectionSwift {
     private lateinit var konnection: Konnection
 
     /** Initialize a Konnection instance on your Swift code. */
-    fun start() {
-        require(!this::konnection.isInitialized) { "Konnection already initialized!" }
-        konnection = Konnection.createInstance(
-            enableDebugLog = false,
-            ipResolvers = listOf(
-                MyExternalIpResolver(false),
-                IPv6TestIpResolver(false)
-            )
-        )
-    }
+    // fun start() {
+    //     require(!this::konnection.isInitialized) { "Konnection already initialized!" }
+    //     konnection = Konnection.createInstance(
+    //         enableDebugLog = false,
+    //         ipResolvers = listOf(
+    //             MyExternalIpResolver(false),
+    //             IPv6TestIpResolver(false)
+    //         )
+    //     )
+    // }
 
     /** Initialize a Konnection instance on your Swift code. */
-    fun start(enableDebugLog: Boolean) {
+    fun start(enableDebugLog: Boolean = false) {
         require(!this::konnection.isInitialized) { "Konnection already initialized!" }
         konnection = Konnection.createInstance(
             enableDebugLog = enableDebugLog,
