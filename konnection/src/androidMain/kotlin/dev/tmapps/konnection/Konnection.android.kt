@@ -10,6 +10,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -144,8 +145,9 @@ actual class Konnection private constructor(
                 ipv6 = ipv6,
                 externalIp = getExternalIp()
             )
-        } catch (ex: Exception) {
-            debugLog("getIpInfo networkConnection = $networkConnection", ex)
+        } catch (error: Exception) {
+            ensureActive()
+            debugLog("getIpInfo networkConnection = $networkConnection", error)
             return@withContext null
         }
     }

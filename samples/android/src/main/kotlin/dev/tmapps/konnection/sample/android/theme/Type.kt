@@ -91,6 +91,7 @@ val typography = typographyFromDefaults(
     )
 )
 
+@Suppress("LongParameterList")
 private fun typographyFromDefaults(
     displayLarge: TextStyle?,
     displayMedium: TextStyle?,

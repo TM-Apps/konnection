@@ -5,12 +5,11 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.mokkery)
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.maven.publish)
 }
 
 group = "dev.tmapps"
-version = "1.4.4"
+version = "1.4.5"
 
 kotlin {
     androidTarget {
@@ -72,7 +71,7 @@ kotlin {
 
 android {
     namespace = "dev.tmapps.konnection"
-    compileSdk = 35
+    compileSdk = 36
     
     defaultConfig {
         minSdk = 21
@@ -102,67 +101,40 @@ android {
 //     )
 // }
 
-// Workaround for gradle issue: https://youtrack.jetbrains.com/issue/KT-46466
-val signingTasks = tasks.withType<Sign>()
-tasks.withType<AbstractPublishToMaven>().configureEach {
-    dependsOn(signingTasks)
-}
-
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
-publishing {
-    publications.withType<MavenPublication> {
-        artifact(javadocJar.get())
+mavenPublishing {
+    publishToMavenCentral()
 
-        pom {
-            withXml {
-                asNode().apply {
-                    appendNode("name", project.name)
-                    appendNode("description", "A Kotlin Multiplatform library for Network Connection data.")
-                    appendNode("url", "https://github.com/TM-Apps/konnection")
-                }
-            }
-            licenses {
-                license {
-                    name.set("The Apache Software License, Version 2.0")
-                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    distribution.set("repo")
-                }
-            }
-            developers {
-                developer {
-                    id.set("magnumrocha")
-                    name.set("Magnum Rocha")
-                    organization.set("TMApps")
-                    organizationUrl.set("http://github.com/TM-Apps")
-                }
-            }
-            scm {
-                url.set("https://github.com/TM-Apps/konnection")
+    signAllPublications()
+
+    coordinates(group.toString(), project.name, version.toString())
+
+    pom {
+        name = project.name
+        description = "A Kotlin Multiplatform library for Network Connection data."
+        url = "https://github.com/TM-Apps/konnection"
+        licenses {
+            license {
+                name = "The Apache Software License, Version 2.0"
+                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "repo"
             }
         }
-    }
-    repositories {
-        maven {
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("SONATYPE_USER")
-                password = System.getenv("SONATYPE_PASSWORD")
+        developers {
+            developer {
+                id = "magnumrocha"
+                name = "Magnum Rocha"
+                organization = "TMApps"
+                organizationUrl = "http://github.com/TM-Apps"
             }
         }
-    }
-}
-
-val signingKey = System.getenv("SIGN_KEY_PRIVATE")
-
-if (signingKey != null) {
-    val signingKeyId = System.getenv("SIGN_KEY_ID")
-    val signingPassword = System.getenv("SIGN_KEY_PASSPHRASE")
-
-    signing {
-        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-        sign(publishing.publications)
+        scm {
+            url = "https://github.com/TM-Apps/konnection"
+            connection = "scm:git:git://github.com/TM-Apps/konnection.git"
+            developerConnection = "scm:git:ssh://git@github.com/TM-Apps/konnection.git"
+        }
     }
 }

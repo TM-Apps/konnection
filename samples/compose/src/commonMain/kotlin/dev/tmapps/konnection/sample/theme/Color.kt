@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package dev.tmapps.konnection.sample.theme
 
 import androidx.compose.material3.ColorScheme

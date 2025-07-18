@@ -5,15 +5,14 @@ import kotlinx.coroutines.flow.Flow
 expect class Konnection {
     companion object {
         /**
-         * Returns the current [Konnection] instance
-         * or instantiate with a default config.
+         * Returns the current [Konnection] instance or instantiate with a default config.
          */
         val instance: Konnection
 
         /**
          * Creates and returns a [Konnection] instance.
          *
-         * @param enableDebugLog if true the internal Konnection debug logs will be enable.
+         * @param enableDebugLog if true, the internal Konnection debug logs will be enabled.
          * @param ipResolvers a list of [IpResolver] to find for IP info when `getCurrentIpInfo()`.
          *
          * **NOTE**: It is strongly recommended to work with only one [Konnection] instance on the App.
@@ -27,9 +26,9 @@ expect class Konnection {
         ): Konnection
     }
 
-    /** Returns true if has some Network Connection otherwise false. */
+    /** Indicates whether a network connection is available (true) or not (false). */
     fun isConnected(): Boolean
-    /** Hot Flow that emits if has Network Connection or not. */
+    /** Hot Flow that emits if there is Network Connection (true) or not (false). */
     fun observeHasConnection(): Flow<Boolean>
 
     /** Returns the current Network Connection. */

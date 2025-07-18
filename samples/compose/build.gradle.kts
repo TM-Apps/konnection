@@ -54,14 +54,14 @@ kotlin {
 
 android {
     namespace = "dev.tmapps.konnection.sample"
-    compileSdk = 35
+    compileSdk = 36
 
     buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = "dev.tmapps.konnection.sample.compose"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }

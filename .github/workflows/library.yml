@@ -9,9 +9,31 @@ on:
     branches: [ master ]
 
 jobs:
+  test:
+    # The type of runner that the job will run on
+    runs-on: macOS-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: 17
+
+      - name: Run Code Analysis
+        run: ./gradlew konnection:detektAll
+
+      - name: Run Tests
+        run: ./gradlew konnection:test
+
   build:
     # The type of runner that the job will run on
     runs-on: macOS-latest
+    needs: test
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -152,10 +174,10 @@ jobs:
 
     - name: publish on Maven
       env:
-        SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
-        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-        SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
-        SIGN_KEY_PASSPHRASE: ${{ secrets.SIGN_KEY_PASSPHRASE }}
-        SIGN_KEY_PRIVATE: ${{ secrets.SIGN_KEY_PRIVATE }}
-      run: ./gradlew konnection:publish
+        ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USER }}
+        ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+        ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGN_KEY_ID }}
+        ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGN_KEY_PASSPHRASE }}
+        ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGN_KEY_PRIVATE }}
+      run: ./gradlew konnection:publishToMavenCentral --no-configuration-cache
 

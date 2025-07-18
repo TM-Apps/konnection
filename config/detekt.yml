@@ -1,0 +1,26 @@
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+  MatchingDeclarationName:
+    active: false  # Disable the rule completely
+
+style:
+  MagicNumber:
+    excludes: ['**/commonMain/**/*Test.kt', '**/androidMain/**/*Test.kt', '**/iosMain/**/*Test.kt']
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotation: true
+    ignoreNamedArgument: true
+    ignoreEnums: true
+    ignoreRanges: true
+    ignoreConstantDeclaration: true
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+
+complexity:
+  LongMethod:
+    excludes: ['**/commonMain/**/*Screen.kt', '**/androidMain/**/*Screen.kt', '**/iosMain/**/*Screen.kt']
+  LongParameterList:
+    excludes: ['**/commonMain/**/*Screen.kt', '**/androidMain/**/*Screen.kt', '**/iosMain/**/*Screen.kt']
+  TooManyFunctions:
+    ignoreAnnotatedFunctions: ['Preview']

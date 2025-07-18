@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 import dev.tmapps.konnection.Konnection
 import dev.tmapps.konnection.IPv6TestIpResolver
 import dev.tmapps.konnection.MyExternalIpResolver

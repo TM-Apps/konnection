@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "dev.tmapps.konnection.sample.android"
-    compileSdk = 35
+    compileSdk = 36
 
     buildFeatures {
         buildConfig = true
@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId = "dev.tmapps.konnection.sample.android"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
